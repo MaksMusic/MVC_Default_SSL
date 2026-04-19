@@ -1,0 +1,10 @@
+# Деплой по уже собранному JAR (без сборки на сервере)
+FROM eclipse-temurin:17-jre-alpine
+WORKDIR /app
+RUN apk add --no-cache curl
+COPY *.jar app.jar
+RUN addgroup -S javauser && adduser -S javauser -G javauser
+USER javauser
+EXPOSE 8080
+ENV SPRING_PROFILES_ACTIVE=docker
+ENTRYPOINT ["java", "-jar", "app.jar"]
