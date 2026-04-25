@@ -1,326 +1,125 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>System Status: Operational</title>
+    <title>Devi Guide</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Montserrat:wght@800&display=swap');
-
-        :root {
-            --primary-color: #00f2ff;
-            --secondary-color: #7000ff;
-            --bg-color: #050505;
-            --text-glow: 0 0 10px rgba(0, 242, 255, 0.5), 0 0 20px rgba(0, 242, 255, 0.3);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { box-sizing: border-box; }
         body {
-            background-color: var(--bg-color);
-            color: white;
-            font-family: 'Montserrat', sans-serif;
-            overflow: hidden;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            background: linear-gradient(165deg, #f8fafc 0%, #eef2ff 40%, #f0f9ff 100%);
+            color: #334155;
         }
-
-        /* Canvas для фона (Частицы) */
-        #canvas-bg {
-            position: absolute;
+        .topbar {
+            position: sticky;
             top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-        }
-
-        /* Контейнер контента */
-        .content-wrapper {
-            position: relative;
             z-index: 10;
-            text-align: center;
-            padding: 2rem;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            background: rgba(0, 0, 0, 0.6);
-            box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
-            animation: float 6s ease-in-out infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            padding: 14px 20px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+            box-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
         }
-
-        /* Заголовок */
-        h1 {
-            font-size: 4rem;
-            text-transform: uppercase;
-            letter-spacing: 5px;
-            margin-bottom: 10px;
-            position: relative;
-            color: #fff;
-            text-shadow: var(--text-glow);
-            font-weight: 800;
-        }
-
-        /* Эффект курсора */
-        .cursor {
-            display: inline-block;
-            width: 10px;
-            background-color: var(--primary-color);
-            animation: blink 1s infinite;
-        }
-
-        /* Подзаголовок (статус) */
-        .status-badge {
-            display: inline-block;
-            margin-top: 20px;
+        .topbar a {
+            color: #475569;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
             padding: 8px 16px;
-            border: 1px solid var(--primary-color);
-            color: var(--primary-color);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.9rem;
-            border-radius: 4px;
-            background: rgba(0, 242, 255, 0.1);
-            box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
-            opacity: 0; /* Скрыто до анимации */
-            transform: translateY(20px);
-            animation: slideUp 0.8s forwards 1s;
+            border-radius: 999px;
+            border: 1px solid rgba(148, 163, 184, 0.35);
+            background: #fff;
+            transition: color 0.2s, border-color 0.2s, box-shadow 0.2s;
         }
-
-        .status-dot {
-            height: 8px;
-            width: 8px;
-            background-color: #0f0;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 8px;
-            box-shadow: 0 0 10px #0f0;
-            animation: pulse-dot 2s infinite;
+        .topbar a:hover {
+            color: #2563eb;
+            border-color: #93c5fd;
+            box-shadow: 0 2px 12px rgba(37, 99, 235, 0.12);
         }
-
-        /* Анимации */
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-15px); }
-            100% { transform: translateY(0px); }
+        .stage {
+            min-height: calc(100vh - 72px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px 20px calc(120px + env(safe-area-inset-bottom, 0px));
         }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
+        .logo {
+            font-size: clamp(2.5rem, 10vw, 4.5rem);
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            text-align: center;
+            line-height: 1.1;
+            background: linear-gradient(105deg, #2563eb, #7c3aed, #db2777);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            filter: drop-shadow(0 4px 20px rgba(124, 58, 237, 0.25));
+            animation: popIn 1.1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards,
+                       floatSoft 4s ease-in-out 1.1s infinite;
+            opacity: 0;
+            transform: scale(0.4);
         }
-
-        @keyframes slideUp {
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.4) translateY(20px); }
+            55% { opacity: 1; transform: scale(1.08) translateY(0); }
+            75% { transform: scale(0.98); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
         }
-
-        @keyframes pulse-dot {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
+        @keyframes floatSoft {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
         }
-
-        /* Адаптив для мобильных */
+        .mobile-nav {
+            position: fixed;
+            left: 14px;
+            right: 14px;
+            bottom: calc(28px + env(safe-area-inset-bottom, 0px));
+            display: none;
+            justify-content: space-around;
+            align-items: center;
+            padding: 12px 10px;
+            background: rgba(255, 255, 255, 0.97);
+            border: 1px solid rgba(148, 163, 184, 0.28);
+            border-radius: 18px;
+            box-shadow: 0 10px 36px rgba(15, 23, 42, 0.1);
+            z-index: 50;
+        }
+        .mobile-nav a {
+            text-decoration: none;
+            color: #475569;
+            font-size: 12px;
+            font-weight: 600;
+        }
         @media (max-width: 768px) {
-            h1 { font-size: 2.5rem; }
-            .content-wrapper { width: 90%; }
+            .topbar { display: none; }
+            .mobile-nav { display: flex; }
         }
     </style>
 </head>
 <body>
-
-<!-- Фон с частицами -->
-<canvas id="canvas-bg"></canvas>
-
-<!-- Основной контент -->
-<div class="content-wrapper">
-    <h1 id="main-text"></h1><span class="cursor"></span>
-
-    <div class="status-badge">
-        <span class="status-dot"></span> SYSTEM ONLINE
-    </div>
+<nav class="topbar">
+    <a th:href="@{/}">Главная</a>
+    <a th:href="@{/catalog}">Каталог</a>
+    <a th:href="@{/about}">О бренде</a>
+    <a th:href="@{/contacts}">Контакты</a>
+    <a th:href="@{/admin}">Админ</a>
+</nav>
+<div class="stage">
+    <div class="logo">Devi Guide</div>
 </div>
-
-<script>
-    // --- 1. ЭФФЕКТ "ХАКЕРСКОГО" ТЕКСТА ---
-    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&";
-    let interval = null;
-    const targetText = "СЕРВИС РАБОТАЕТ";
-    const element = document.getElementById("main-text");
-
-    // Функция запуска анимации текста
-    const startDecoding = () => {
-        let iteration = 0;
-
-        clearInterval(interval);
-
-        interval = setInterval(() => {
-            element.innerText = targetText
-                .split("")
-                .map((letter, index) => {
-                    if(index < iteration) {
-                        return targetText[index];
-                    }
-                    return letters[Math.floor(Math.random() * 26)];
-                })
-                .join("");
-
-            if(iteration >= targetText.length){
-                clearInterval(interval);
-            }
-
-            iteration += 1 / 3; // Скорость расшифровки
-        }, 30);
-    }
-
-    // Запуск при загрузке
-    window.onload = startDecoding;
-
-
-    // --- 2. ЭФФЕКТ ЧАСТИЦ (CANVAS) ---
-    const canvas = document.getElementById("canvas-bg");
-    const ctx = canvas.getContext("2d");
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    let particlesArray;
-
-    // Настройка мыши
-    let mouse = {
-        x: null,
-        y: null,
-        radius: (canvas.height/80) * (canvas.width/80)
-    }
-
-    window.addEventListener('mousemove',
-        function(event) {
-            mouse.x = event.x;
-            mouse.y = event.y;
-        }
-    );
-
-    // Класс частицы
-    class Particle {
-        constructor(x, y, directionX, directionY, size, color) {
-            this.x = x;
-            this.y = y;
-            this.directionX = directionX;
-            this.directionY = directionY;
-            this.size = size;
-            this.color = color;
-        }
-        // Рисуем точку
-        draw() {
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
-            ctx.fillStyle = '#00f2ff';
-            ctx.fill();
-        }
-        // Обновляем позицию
-        update() {
-            if (this.x > canvas.width || this.x < 0) {
-                this.directionX = -this.directionX;
-            }
-            if (this.y > canvas.height || this.y < 0) {
-                this.directionY = -this.directionY;
-            }
-
-            // Взаимодействие с мышью
-            let dx = mouse.x - this.x;
-            let dy = mouse.y - this.y;
-            let distance = Math.sqrt(dx*dx + dy*dy);
-            if (distance < mouse.radius + this.size){
-                if (mouse.x < this.x && this.x < canvas.width - this.size * 10) {
-                    this.x += 10;
-                }
-                if (mouse.x > this.x && this.x > this.size * 10) {
-                    this.x -= 10;
-                }
-                if (mouse.y < this.y && this.y < canvas.height - this.size * 10) {
-                    this.y += 10;
-                }
-                if (mouse.y > this.y && this.y > this.size * 10) {
-                    this.y -= 10;
-                }
-            }
-            this.x += this.directionX;
-            this.y += this.directionY;
-            this.draw();
-        }
-    }
-
-    function init() {
-        particlesArray = [];
-        let numberOfParticles = (canvas.height * canvas.width) / 9000;
-        for (let i = 0; i < numberOfParticles; i++) {
-            let size = (Math.random() * 2) + 1;
-            let x = (Math.random() * ((innerWidth - size * 2) - (size * 2)) + size * 2);
-            let y = (Math.random() * ((innerHeight - size * 2) - (size * 2)) + size * 2);
-            let directionX = (Math.random() * 2) - 1; // Скорость X
-            let directionY = (Math.random() * 2) - 1; // Скорость Y
-            let color = '#00f2ff';
-
-            particlesArray.push(new Particle(x, y, directionX, directionY, size, color));
-        }
-    }
-
-    // Соединение линий
-    function connect(){
-        let opacityValue = 1;
-        for (let a = 0; a < particlesArray.length; a++) {
-            for (let b = a; b < particlesArray.length; b++) {
-                let distance = ((particlesArray[a].x - particlesArray[b].x) * (particlesArray[a].x - particlesArray[b].x))
-                    + ((particlesArray[a].y - particlesArray[b].y) * (particlesArray[a].y - particlesArray[b].y));
-
-                if (distance < (canvas.width/7) * (canvas.height/7)) {
-                    opacityValue = 1 - (distance/20000);
-                    ctx.strokeStyle = 'rgba(0, 242, 255,' + opacityValue + ')';
-                    ctx.lineWidth = 1;
-                    ctx.beginPath();
-                    ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
-                    ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
-                    ctx.stroke();
-                }
-            }
-        }
-    }
-
-    function animate() {
-        requestAnimationFrame(animate);
-        ctx.clearRect(0, 0, innerWidth, innerHeight);
-
-        for (let i = 0; i < particlesArray.length; i++) {
-            particlesArray[i].update();
-        }
-        connect();
-    }
-
-    // Ресайз окна
-    window.addEventListener('resize',
-        function(){
-            canvas.width = innerWidth;
-            canvas.height = innerHeight;
-            mouse.radius = ((canvas.height/80) * (canvas.height/80));
-            init();
-        }
-    );
-
-    // Убираем курсор мыши при уходе со страницы
-    window.addEventListener('mouseout',
-        function(){
-            mouse.x = undefined;
-            mouse.y = undefined;
-        }
-    )
-
-    init();
-    animate();
-</script>
+<nav class="mobile-nav">
+    <a th:href="@{/}">Главная</a>
+    <a th:href="@{/catalog}">Каталог</a>
+    <a th:href="@{/about}">Бренд</a>
+    <a th:href="@{/contacts}">Контакты</a>
+</nav>
 </body>
 </html>
