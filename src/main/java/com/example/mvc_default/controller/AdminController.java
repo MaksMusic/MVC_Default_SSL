@@ -280,6 +280,19 @@ public class AdminController {
         return "redirect:/admin/brand";
     }
 
+    @GetMapping("/weather")
+    public String weather(Model model) {
+        model.addAttribute("activeMenu", "weather");
+        model.addAttribute("weather", normalizeWeather(sitePageService.getContent("weather", "NONE")));
+        return "admin/weather";
+    }
+
+    @PostMapping("/weather")
+    public String updateWeather(@RequestParam String weather) {
+        sitePageService.updateContent("weather", normalizeWeather(weather));
+        return "redirect:/admin/weather";
+    }
+
     @ModelAttribute("qrService")
     public QRCodeService qrService() {
         return qrCodeService;
@@ -318,5 +331,16 @@ public class AdminController {
             return base;
         }
         return base + "-" + System.currentTimeMillis();
+    }
+
+    private String normalizeWeather(String weather) {
+        if (weather == null) {
+            return "NONE";
+        }
+        String value = weather.trim().toUpperCase();
+        return switch (value) {
+            case "WINTER", "AUTUMN", "SUMMER", "NONE" -> value;
+            default -> "NONE";
+        };
     }
 }

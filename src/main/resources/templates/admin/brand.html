@@ -38,6 +38,7 @@
             <a th:href="@{/admin/products}">Товары</a>
             <a th:href="@{/admin/contacts}">Контакты</a>
             <a class="active" th:href="@{/admin/brand}">О бренде</a>
+            <a th:href="@{/admin/weather}">Погода</a>
             <a th:href="@{/}">На сайт</a>
             <a th:href="@{/logout}">Выйти</a>
         </nav>
@@ -59,6 +60,7 @@
         <a th:href="@{/admin/products}" th:classappend="${activeMenu == 'products'} ? 'active'">Товары</a>
         <a th:href="@{/admin/contacts}" th:classappend="${activeMenu == 'contacts'} ? 'active'">Контакты</a>
         <a th:href="@{/admin/brand}" th:classappend="${activeMenu == 'brand'} ? 'active'">О бренде</a>
+        <a th:href="@{/admin/weather}" th:classappend="${activeMenu == 'weather'} ? 'active'">Погода</a>
         <hr>
         <a th:href="@{/}">На сайт</a>
         <a th:href="@{/logout}">Выйти</a>

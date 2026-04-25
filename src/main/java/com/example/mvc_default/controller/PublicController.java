@@ -25,7 +25,9 @@ public class PublicController {
     }
 
     @GetMapping("/")
-    public String home() {
+    public String home(Model model) {
+        String weather = sitePageService.getContent("weather", "NONE");
+        model.addAttribute("weather", weather == null ? "NONE" : weather);
         return "index";
     }
 

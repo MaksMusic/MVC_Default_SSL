@@ -50,6 +50,8 @@
             align-items: center;
             justify-content: center;
             padding: 24px 20px calc(120px + env(safe-area-inset-bottom, 0px));
+            position: relative;
+            z-index: 2;
         }
         .logo {
             font-size: clamp(2.5rem, 10vw, 4.5rem);
@@ -78,6 +80,63 @@
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-4px); }
         }
+        .weather-layer{
+            position:fixed;
+            inset:0;
+            pointer-events:none;
+            overflow:hidden;
+            z-index:1;
+        }
+        .particle{
+            position:absolute;
+            top:-10%;
+            border-radius:50%;
+            opacity:.85;
+            animation:fall linear infinite;
+        }
+        .particle.snow{
+            background:#fff;
+            box-shadow:0 0 8px rgba(255,255,255,.6);
+        }
+        .particle.leaf{
+            background:transparent;
+            font-size:14px;
+            animation-name:fallLeaf;
+        }
+        .sun{
+            position:fixed;
+            top:84px;
+            right:42px;
+            width:84px;
+            height:84px;
+            border-radius:50%;
+            background:radial-gradient(circle,#fde68a 25%,#f59e0b 68%);
+            box-shadow:0 0 45px rgba(245,158,11,.55);
+            z-index:1;
+            pointer-events:none;
+        }
+        .sun::before{
+            content:'';
+            position:absolute;
+            inset:-20px;
+            border-radius:50%;
+            border:2px dashed rgba(245,158,11,.55);
+            animation:sunSpin 12s linear infinite;
+        }
+        @keyframes fall{
+            0%{transform:translateY(-12vh);opacity:0}
+            10%{opacity:.95}
+            100%{transform:translateY(112vh);opacity:.2}
+        }
+        @keyframes fallLeaf{
+            0%{transform:translate(0,-12vh) rotate(0deg);opacity:0}
+            10%{opacity:.95}
+            100%{transform:translate(38px,112vh) rotate(220deg);opacity:.25}
+        }
+        @keyframes sunSpin{
+            from{transform:rotate(0deg)}
+            to{transform:rotate(360deg)}
+        }
         .mobile-nav {
             position: fixed;
             left: 14px;
@@ -105,7 +164,7 @@
         }
     </style>
 </head>
-<body>
+<body th:attr="data-weather=${weather}">
 <nav class="topbar">
     <a th:href="@{/}">Главная</a>
     <a th:href="@{/catalog}">Каталог</a>
@@ -113,6 +172,8 @@
     <a th:href="@{/contacts}">Контакты</a>
     <a th:href="@{/admin}">Админ</a>
 </nav>
+<div class="weather-layer" id="weatherLayer" aria-hidden="true"></div>
+<div class="sun" id="summerSun" th:if="${weather == 'SUMMER'}"></div>
 <div class="stage">
     <div class="logo">Devi Guide</div>
 </div>
@@ -122,5 +183,32 @@
     <a th:href="@{/about}">Бренд</a>
     <a th:href="@{/contacts}">Контакты</a>
 </nav>
+<script>
+(function(){
+    var weather=(document.body.getAttribute('data-weather')||'NONE').toUpperCase();
+    var layer=document.getElementById('weatherLayer');
+    if(!layer||weather==='NONE'||weather==='SUMMER'){return;}
+    var count=weather==='WINTER'?64:40;
+    for(var i=0;i<count;i++){
+        var p=document.createElement('span');
+        p.className='particle '+(weather==='WINTER'?'snow':'leaf');
+        var left=Math.random()*100;
+        var size=weather==='WINTER'?(2+Math.random()*5):(10+Math.random()*8);
+        var duration=weather==='WINTER'?(5+Math.random()*8):(7+Math.random()*10);
+        var delay=Math.random()*-duration;
+        p.style.left=left+'vw';
+        p.style.animationDuration=duration+'s';
+        p.style.animationDelay=delay+'s';
+        if(weather==='WINTER'){
+            p.style.width=size+'px';
+            p.style.height=size+'px';
+        }else{
+            p.textContent='🍂';
+            p.style.fontSize=size+'px';
+        }
+        layer.appendChild(p);
+    }
+})();
+</script>
 </body>
 </html>
