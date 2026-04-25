@@ -12,18 +12,18 @@
         .topbar a:hover{color:#2563eb;border-color:#93c5fd;box-shadow:0 2px 12px rgba(37,99,235,.12)}
         @media(max-width:768px){.topbar{display:none}}
         .wrap{max-width:1100px;margin:0 auto;padding:20px 20px calc(118px + env(safe-area-inset-bottom,0px))}
-        .brand{display:inline-block;font-size:26px;font-weight:800;letter-spacing:.06em;background:linear-gradient(105deg,#2563eb,#7c3aed,#db2777);-webkit-background-clip:text;background-clip:text;color:transparent}
         .page-head{margin-top:12px}
-        .page-head h1{margin:0;color:#0f172a;font-size:1.5rem}
+        .page-head h1{margin:0;font-size:1.8rem;font-weight:800;background:linear-gradient(110deg,#2563eb,#7c3aed,#db2777);-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:.02em}
         .grid{margin-top:18px;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
-        .card{background:#fff;border:1px solid rgba(148,163,184,.25);border-radius:18px;padding:16px;box-shadow:0 8px 28px rgba(15,23,42,.06)}
+        .card{background:#fff;border:1px solid rgba(148,163,184,.25);border-radius:18px;padding:16px;box-shadow:0 8px 28px rgba(15,23,42,.06);transition:transform .22s ease, box-shadow .22s ease, border-color .22s ease}
+        .card:hover{transform:translateY(-6px) scale(1.01);border-color:rgba(37,99,235,.35);box-shadow:0 16px 36px rgba(37,99,235,.18)}
         .card h3{margin:0 0 8px;color:#0f172a}
         .card p{margin:0;color:#64748b;font-size:14px}
         .btn{display:inline-block;margin-top:10px;padding:10px 16px;border-radius:10px;background:linear-gradient(105deg,#2563eb,#7c3aed);color:#fff;text-decoration:none;font-weight:600;font-size:14px}
         .btn:hover{opacity:.95}
         .mobile-nav{position:fixed;left:14px;right:14px;bottom:calc(28px + env(safe-area-inset-bottom,0px));z-index:50;background:rgba(255,255,255,.97);border:1px solid rgba(148,163,184,.28);border-radius:18px;padding:12px 10px;display:none;justify-content:space-around;align-items:center;box-shadow:0 10px 36px rgba(15,23,42,.1)}
         .mobile-nav a{text-decoration:none;color:#475569;font-size:12px;font-weight:600}
-        @media(max-width:768px){.mobile-nav{display:flex}.brand{font-size:22px}}
+        @media(max-width:768px){.mobile-nav{display:flex}}
     </style>
 </head>
 <body>
@@ -35,7 +35,6 @@
     <a th:href="@{/admin}">Админ</a>
 </nav>
 <div class="wrap">
-    <div class="brand">Devi Guide</div>
     <div class="page-head">
         <h1>Каталоги</h1>
     </div>

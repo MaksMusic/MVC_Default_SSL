@@ -12,14 +12,13 @@
         .topbar a:hover{color:#2563eb;border-color:#93c5fd;box-shadow:0 2px 12px rgba(37,99,235,.12)}
         @media(max-width:768px){.topbar{display:none}}
         .wrap{max-width:900px;margin:0 auto;padding:20px 20px calc(118px + env(safe-area-inset-bottom,0px))}
-        .brand{display:inline-block;font-size:26px;font-weight:800;letter-spacing:.06em;background:linear-gradient(105deg,#2563eb,#7c3aed,#db2777);-webkit-background-clip:text;background-clip:text;color:transparent}
         .page-head{margin-top:12px}
-        .page-head h1{margin:0;color:#0f172a;font-size:1.5rem}
-        .card{margin-top:16px;background:#fff;border:1px solid rgba(148,163,184,.25);border-radius:16px;padding:18px;box-shadow:0 8px 28px rgba(15,23,42,.06)}
-        .card p{color:#475569;line-height:1.6}
+        .page-head h1{margin:0;font-size:1.9rem;font-weight:800;background:linear-gradient(110deg,#2563eb,#7c3aed,#db2777);-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:.02em}
+        .card{margin-top:16px;background:linear-gradient(145deg,#ffffff,#f7faff);border:1px solid rgba(148,163,184,.25);border-radius:18px;padding:22px;box-shadow:0 12px 30px rgba(15,23,42,.08)}
+        .contact-text{color:#334155;line-height:1.8;white-space:pre-line}
         .mobile-nav{position:fixed;left:14px;right:14px;bottom:calc(28px + env(safe-area-inset-bottom,0px));z-index:50;background:rgba(255,255,255,.97);border:1px solid rgba(148,163,184,.28);border-radius:18px;padding:12px 10px;display:none;justify-content:space-around;align-items:center;box-shadow:0 10px 36px rgba(15,23,42,.1)}
         .mobile-nav a{text-decoration:none;color:#475569;font-size:12px;font-weight:600}
-        @media(max-width:768px){.mobile-nav{display:flex}.brand{font-size:22px}}
+        @media(max-width:768px){.mobile-nav{display:flex}}
     </style>
 </head>
 <body>
@@ -31,12 +30,11 @@
     <a th:href="@{/admin}">Админ</a>
 </nav>
 <div class="wrap">
-    <div class="brand">Devi Guide</div>
     <div class="page-head">
         <h1>Контакты</h1>
     </div>
     <article class="card">
-        <p th:text="${content}">Контактная информация</p>
+        <p class="contact-text" th:text="${content}">Контактная информация</p>
     </article>
 </div>
 <nav class="mobile-nav">

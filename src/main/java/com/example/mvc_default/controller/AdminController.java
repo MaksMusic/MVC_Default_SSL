@@ -9,10 +9,12 @@ import com.example.mvc_default.service.QRCodeService;
 import com.example.mvc_default.service.SitePageService;
 import com.example.mvc_default.service.SlugService;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Arrays;
 
@@ -55,18 +57,46 @@ public class AdminController {
     }
 
     @PostMapping("/catalogs")
-    public String createCatalog(@RequestParam String name) {
+    public String createCatalog(@RequestParam String name, RedirectAttributes redirectAttributes) {
+        String normalized = name == null ? "" : name.trim();
+        if (normalized.isBlank()) {
+            redirectAttributes.addFlashAttribute("error", "Введите название каталога");
+            return "redirect:/admin/catalogs";
+        }
+        if (categoryRepository.existsByNameIgnoreCase(normalized)) {
+            redirectAttributes.addFlashAttribute("error", "Такой каталог уже есть");
+            return "redirect:/admin/catalogs";
+        }
         Category category = new Category();
-        category.setName(name);
-        categoryRepository.save(category);
+        category.setName(normalized);
+        try {
+            categoryRepository.save(category);
+        } catch (DataIntegrityViolationException ex) {
+            redirectAttributes.addFlashAttribute("error", "Такой каталог уже есть");
+            return "redirect:/admin/catalogs";
+        }
         return "redirect:/admin/catalogs";
     }
 
     @PostMapping("/catalogs/{id}/rename")
-    public String renameCatalog(@PathVariable Long id, @RequestParam String name) {
+    public String renameCatalog(@PathVariable Long id, @RequestParam String name, RedirectAttributes redirectAttributes) {
         Category category = categoryRepository.findById(id).orElseThrow();
-        category.setName(name);
-        categoryRepository.save(category);
+        String normalized = name == null ? "" : name.trim();
+        if (normalized.isBlank()) {
+            redirectAttributes.addFlashAttribute("error", "Введите название каталога");
+            return "redirect:/admin/catalogs";
+        }
+        if (categoryRepository.existsByNameIgnoreCaseAndIdNot(normalized, id)) {
+            redirectAttributes.addFlashAttribute("error", "Такой каталог уже есть");
+            return "redirect:/admin/catalogs";
+        }
+        category.setName(normalized);
+        try {
+            categoryRepository.save(category);
+        } catch (DataIntegrityViolationException ex) {
+            redirectAttributes.addFlashAttribute("error", "Такой каталог уже есть");
+            return "redirect:/admin/catalogs";
+        }
         return "redirect:/admin/catalogs";
     }
 
@@ -96,7 +126,10 @@ public class AdminController {
 
     @GetMapping("/products/{id}/edit")
     public String editProduct(@PathVariable Long id, Model model) {
-        Product product = productRepository.findById(id).orElseThrow();
+        Product product = productRepository.findById(id).orElse(null);
+        if (product == null) {
+            return "redirect:/admin/products?error=Товар+не+найден";
+        }
         model.addAttribute("activeMenu", "products");
         model.addAttribute("categories", categoryRepository.findAll());
         model.addAttribute("instructionTypes", Arrays.asList(InstructionType.values()));
@@ -109,6 +142,7 @@ public class AdminController {
     public String createProduct(
             @RequestParam String name,
             @RequestParam String shortDescription,
+            @RequestParam(required = false) String wbProductUrl,
             @RequestParam Long categoryId,
             @RequestParam(required = false) MultipartFile imageFile,
             @RequestParam(required = false) MultipartFile videoFile,
@@ -120,6 +154,7 @@ public class AdminController {
         Product product = new Product();
         product.setName(name);
         product.setShortDescription(shortDescription);
+        product.setWbProductUrl(wbProductUrl);
         product.setCategory(category);
         product.setSlug(uniqueSlug(name));
         applyMediaFiles(product, imageFile, videoFile, audioFile);
@@ -134,10 +169,15 @@ public class AdminController {
             @PathVariable Long id,
             @RequestParam String name,
             @RequestParam String shortDescription,
+            @RequestParam(required = false) String wbProductUrl,
             @RequestParam Long categoryId,
             @RequestParam(required = false) MultipartFile imageFile,
             @RequestParam(required = false) MultipartFile videoFile,
             @RequestParam(required = false) MultipartFile audioFile,
+            @RequestParam(required = false, defaultValue = "false") boolean removeImage,
+            @RequestParam(required = false, defaultValue = "false") boolean removeVideo,
+            @RequestParam(required = false, defaultValue = "false") boolean removeAudio,
+            @RequestParam(required = false, defaultValue = "false") boolean removeInstructionFiles,
             @RequestParam(required = false) String instructionTitle,
             @RequestParam(required = false) MultipartFile instructionFile
     ) throws Exception {
@@ -145,7 +185,31 @@ public class AdminController {
         Category category = categoryRepository.findById(categoryId).orElseThrow();
         product.setName(name);
         product.setShortDescription(shortDescription);
+        product.setWbProductUrl(wbProductUrl);
         product.setCategory(category);
+
+        if (removeImage) {
+            fileStorageService.deleteIfExists(product.getImageFileName());
+            product.setImageFileName(null);
+        }
+        if (removeVideo) {
+            fileStorageService.deleteIfExists(product.getVideoFileName());
+            product.setVideoFileName(null);
+        }
+        if (removeAudio) {
+            fileStorageService.deleteIfExists(product.getAudioFileName());
+            product.setAudioFileName(null);
+        }
+        if (removeInstructionFiles) {
+            product.getInstructions().removeIf(instruction -> {
+                if (instruction.getFileName() != null && !instruction.getFileName().isBlank()) {
+                    fileStorageService.deleteIfExists(instruction.getFileName());
+                    return true;
+                }
+                return false;
+            });
+        }
+
         applyMediaFiles(product, imageFile, videoFile, audioFile);
         productRepository.save(product);
 
@@ -223,12 +287,15 @@ public class AdminController {
 
     private void applyMediaFiles(Product product, MultipartFile imageFile, MultipartFile videoFile, MultipartFile audioFile) throws Exception {
         if (imageFile != null && !imageFile.isEmpty()) {
+            fileStorageService.deleteIfExists(product.getImageFileName());
             product.setImageFileName(fileStorageService.save(imageFile, "images"));
         }
         if (videoFile != null && !videoFile.isEmpty()) {
+            fileStorageService.deleteIfExists(product.getVideoFileName());
             product.setVideoFileName(fileStorageService.save(videoFile, "videos"));
         }
         if (audioFile != null && !audioFile.isEmpty()) {
+            fileStorageService.deleteIfExists(product.getAudioFileName());
             product.setAudioFileName(fileStorageService.save(audioFile, "audio"));
         }
     }

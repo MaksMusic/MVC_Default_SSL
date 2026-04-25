@@ -15,6 +15,9 @@
         .card{background:#fff;border-radius:14px;padding:14px;margin-bottom:12px;box-shadow:0 8px 20px rgba(2,6,23,.08)}
         input,select,textarea,button{width:100%;padding:9px;border-radius:8px;border:1px solid #d1d5db;margin-bottom:8px}
         button{background:#1d4ed8;color:#fff;border:none;cursor:pointer}
+        .inline-option{display:flex;gap:8px;align-items:center;margin:0 0 10px}
+        .inline-option input{width:auto;margin:0}
+        .inline-option label{margin:0}
         .admin-mfab-wrap{display:none}
         @media(max-width:900px){.layout{display:block}.sidebar{display:none}.admin-mfab-wrap{display:block}}
         .admin-mfab-backdrop{position:fixed;inset:0;z-index:998;background:rgba(15,23,42,.34);opacity:0;pointer-events:none;transition:opacity .2s ease}
@@ -49,6 +52,7 @@
                   method="post" enctype="multipart/form-data">
                 <input name="name" th:value="${product.name}" placeholder="Название товара" required>
                 <textarea name="shortDescription" placeholder="Описание" required th:text="${product.shortDescription}"></textarea>
+                <input name="wbProductUrl" type="url" th:value="${product.wbProductUrl}" placeholder="Ссылка на товар на Wildberries (https://...)">
                 <select name="categoryId" required>
                     <option value="">Выберите каталог</option>
                     <option th:each="c : ${categories}" th:value="${c.id}" th:text="${c.name}" th:selected="${editMode and product.category != null and product.category.id == c.id}"></option>
@@ -56,43 +60,37 @@
 
                 <label>Картинка товара</label>
                 <input name="imageFile" type="file" accept="image/*">
-                <img th:if="${editMode and product.imageFileName}" th:src="@{/files(path=${product.imageFileName})}" alt="Фото" style="max-width:240px;border-radius:12px;margin-bottom:8px;">
+                <img th:if="${editMode and product.imageFileName != null and !#strings.isEmpty(product.imageFileName)}" th:src="@{/files(path=${product.imageFileName})}" alt="Фото" style="max-width:240px;border-radius:12px;margin-bottom:8px;">
+                <div class="inline-option" th:if="${editMode and product.imageFileName != null and !#strings.isEmpty(product.imageFileName)}">
+                    <input id="removeImage" name="removeImage" type="checkbox" value="true">
+                    <label for="removeImage">Удалить текущую картинку</label>
+                </div>
 
                 <label>Видео товара</label>
                 <input name="videoFile" type="file" accept="video/*">
-                <video th:if="${editMode and product.videoFileName}" controls th:src="@{/files(path=${product.videoFileName})}" style="max-width:320px;margin-bottom:8px;"></video>
+                <video th:if="${editMode and product.videoFileName != null and !#strings.isEmpty(product.videoFileName)}" controls th:src="@{/files(path=${product.videoFileName})}" style="max-width:320px;margin-bottom:8px;"></video>
+                <div class="inline-option" th:if="${editMode and product.videoFileName != null and !#strings.isEmpty(product.videoFileName)}">
+                    <input id="removeVideo" name="removeVideo" type="checkbox" value="true">
+                    <label for="removeVideo">Удалить текущее видео</label>
+                </div>
 
                 <label>Аудио товара</label>
                 <input name="audioFile" type="file" accept="audio/*">
-                <audio th:if="${editMode and product.audioFileName}" controls th:src="@{/files(path=${product.audioFileName})}" style="margin-bottom:8px;"></audio>
+                <audio th:if="${editMode and product.audioFileName != null and !#strings.isEmpty(product.audioFileName)}" controls th:src="@{/files(path=${product.audioFileName})}" style="margin-bottom:8px;"></audio>
+                <div class="inline-option" th:if="${editMode and product.audioFileName != null and !#strings.isEmpty(product.audioFileName)}">
+                    <input id="removeAudio" name="removeAudio" type="checkbox" value="true">
+                    <label for="removeAudio">Удалить текущее аудио</label>
+                </div>
 
                 <label>PDF инструкция (опционально)</label>
                 <input name="instructionTitle" placeholder="Название инструкции">
                 <input name="instructionFile" type="file" accept=".pdf,.doc,.docx">
+                <div class="inline-option" th:if="${editMode and product.instructions != null and !#lists.isEmpty(product.instructions)}">
+                    <input id="removeInstructionFiles" name="removeInstructionFiles" type="checkbox" value="true">
+                    <label for="removeInstructionFiles">Удалить все файлы инструкций у товара</label>
+                </div>
                 <button type="submit" th:text="${editMode} ? 'Сохранить товар' : 'Добавить товар'">Сохранить</button>
             </form>
-        </section>
-
-        <section class="card" th:if="${editMode}">
-            <h3>Дополнительные инструкции</h3>
-            <form th:action="@{/admin/products/{id}/instructions(id=${product.id})}" method="post" enctype="multipart/form-data">
-                <select name="type" required>
-                    <option th:each="t : ${instructionTypes}" th:value="${t}" th:text="${t}"></option>
-                </select>
-                <input name="title" placeholder="Заголовок" required>
-                <textarea name="contentText" placeholder="Текст инструкции"></textarea>
-                <input name="externalUrl" placeholder="Внешняя ссылка (например на YouTube)">
-                <input name="file" type="file">
-                <button type="submit">Добавить инструкцию</button>
-            </form>
-
-            <div th:each="ins : ${product.instructions}" style="border-top:1px solid #e5e7eb;padding-top:8px;margin-top:8px;">
-                <b th:text="${ins.title}">Инструкция</b> - <span th:text="${ins.type}">TYPE</span>
-                <form th:action="@{/admin/instructions/{id}/delete(id=${ins.id})}" method="post"
-                      onsubmit="return confirm('Удалить инструкцию?');">
-                    <button type="submit">Удалить</button>
-                </form>
-            </div>
         </section>
     </main>
 </div>

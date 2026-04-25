@@ -19,8 +19,9 @@
         .card{background:#fff;border:1px solid rgba(148,163,184,.25);border-radius:18px;padding:14px;box-shadow:0 8px 28px rgba(15,23,42,.06)}
         .card img{width:100%;height:170px;object-fit:cover;border-radius:12px;background:#e2e8f0}
         .card h3{margin:8px 0 4px;color:#0f172a}
-        .card p{margin:0;color:#64748b;font-size:14px}
-        .btn{display:inline-block;margin-top:10px;padding:10px 16px;border-radius:10px;background:linear-gradient(105deg,#2563eb,#7c3aed);color:#fff;text-decoration:none;font-weight:600;font-size:14px}
+        .card p{margin:0;color:#64748b;font-size:14px;white-space:pre-line}
+        .btn{display:inline-block;margin-top:10px;margin-right:8px;padding:10px 16px;border-radius:10px;background:linear-gradient(105deg,#2563eb,#7c3aed);color:#fff;text-decoration:none;font-weight:600;font-size:14px}
+        .btn.wb{background:linear-gradient(105deg,#a16207,#d97706)}
         .mobile-nav{position:fixed;left:14px;right:14px;bottom:calc(28px + env(safe-area-inset-bottom,0px));z-index:50;background:rgba(255,255,255,.97);border:1px solid rgba(148,163,184,.28);border-radius:18px;padding:12px 10px;display:none;justify-content:space-around;align-items:center;box-shadow:0 10px 36px rgba(15,23,42,.1)}
         .mobile-nav a{text-decoration:none;color:#475569;font-size:12px;font-weight:600}
         @media(max-width:768px){.mobile-nav{display:flex}.brand{font-size:22px}}
@@ -45,6 +46,8 @@
             <h3 th:text="${product.name}">Товар</h3>
             <p th:text="${product.shortDescription}">Описание</p>
             <a class="btn" th:href="@{/product/{slug}(slug=${product.slug})}">Подробнее</a>
+            <a class="btn wb" th:if="${product.wbProductUrl != null and !#strings.isEmpty(product.wbProductUrl)}"
+               th:href="${product.wbProductUrl}" target="_blank" rel="noopener noreferrer">Найти на WB</a>
         </article>
     </div>
 </div>

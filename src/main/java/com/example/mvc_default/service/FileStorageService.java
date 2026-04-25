@@ -50,4 +50,15 @@ public class FileStorageService {
         }
         return resource;
     }
+
+    public void deleteIfExists(String fileName) {
+        if (fileName == null || fileName.isBlank()) {
+            return;
+        }
+        try {
+            Files.deleteIfExists(uploadDir.resolve(fileName).normalize());
+        } catch (IOException ignored) {
+            // Safe delete: do not fail business flow if file is already missing or locked.
+        }
+    }
 }

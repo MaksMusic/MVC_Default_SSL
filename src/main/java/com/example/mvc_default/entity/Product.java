@@ -27,6 +27,9 @@ public class Product {
 
     private String audioFileName;
 
+    @Column(length = 1000)
+    private String wbProductUrl;
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "category_id")
     private Category category;
@@ -48,6 +51,8 @@ public class Product {
     public void setVideoFileName(String videoFileName) { this.videoFileName = videoFileName; }
     public String getAudioFileName() { return audioFileName; }
     public void setAudioFileName(String audioFileName) { this.audioFileName = audioFileName; }
+    public String getWbProductUrl() { return wbProductUrl; }
+    public void setWbProductUrl(String wbProductUrl) { this.wbProductUrl = wbProductUrl; }
     public Category getCategory() { return category; }
     public void setCategory(Category category) { this.category = category; }
     public List<Instruction> getInstructions() { return instructions; }
