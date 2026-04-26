@@ -1,6 +1,6 @@
 # Деплой: JAR + PostgreSQL + Nginx (HTTP/HTTPS)
 # Запуск: ./init-ssl.sh (получит сертификаты при первом запуске и поднимет всё стек).
-version: '3.8'
+# Файл .env в этой же папке обязателен (скопируйте с машины разработчика или создайте на сервере).
 
 services:
   postgres:
@@ -54,13 +54,15 @@ services:
       - devops-network
     volumes:
       - ./uploads:/app/uploads
+      - ./uploads:/app/files
     restart: unless-stopped
+    # Надежный healthcheck: используем curl, а при его отсутствии fallback на wget.
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
-      interval: 30s
+      test: ["CMD-SHELL", "(command -v curl >/dev/null && curl -fsS http://127.0.0.1:8080/actuator/health >/dev/null) || (command -v wget >/dev/null && wget -q -O- http://127.0.0.1:8080/actuator/health >/dev/null)"]
+      interval: 15s
       timeout: 10s
-      retries: 5
-      start_period: 120s
+      retries: 10
+      start_period: 240s
 
   nginx:
     image: nginx:alpine

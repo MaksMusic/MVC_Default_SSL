@@ -21,6 +21,14 @@ if not exist "build\libs\*.jar" (
     exit /b 1
 )
 
+if not exist ".env" (
+    echo.
+    echo ERROR: file .env not found in this folder.
+    echo Docker Compose on the server needs .env next to docker-compose.deploy.yml.
+    echo Copy .env.example to .env, set passwords and URLs, then run deploy again.
+    exit /b 1
+)
+
 echo Creating folders on server...
 ssh %SSH_USER%@%SERVER_IP% "mkdir -p %REMOTE_PATH%/nginx/ssl %REMOTE_PATH%/dumps"
 if errorlevel 1 (
@@ -43,6 +51,13 @@ if errorlevel 1 (
 scp init-ssl.sh backup-db.sh %SSH_USER%@%SERVER_IP%:%REMOTE_PATH%/
 if errorlevel 1 (
     echo Failed to copy scripts.
+    exit /b 1
+)
+
+echo Uploading .env ^(secrets for Postgres and the app^)...
+scp .env %SSH_USER%@%SERVER_IP%:%REMOTE_PATH%/.env
+if errorlevel 1 (
+    echo Failed to copy .env. Check SSH and path %REMOTE_PATH%
     exit /b 1
 )
 
