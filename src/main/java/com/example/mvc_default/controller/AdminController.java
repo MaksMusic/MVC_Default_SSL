@@ -11,6 +11,7 @@ import com.example.mvc_default.service.SlugService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -110,7 +111,7 @@ public class AdminController {
     public String products(Model model, HttpServletRequest request) {
         model.addAttribute("activeMenu", "products");
         model.addAttribute("products", productRepository.findAll());
-        model.addAttribute("baseUrl", request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort());
+        model.addAttribute("baseUrl", resolvePublicBaseUrl(request));
         return "admin/products";
     }
 
@@ -218,8 +219,30 @@ public class AdminController {
     }
 
     @PostMapping("/products/{id}/delete")
-    public String deleteProduct(@PathVariable Long id) {
-        productRepository.deleteById(id);
+    @Transactional
+    public String deleteProduct(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        Product product = productRepository.findById(id).orElse(null);
+        if (product == null) {
+            redirectAttributes.addFlashAttribute("error", "Товар не найден");
+            return "redirect:/admin/products";
+        }
+
+        // Remove media files first so file storage remains clean.
+        fileStorageService.deleteIfExists(product.getImageFileName());
+        fileStorageService.deleteIfExists(product.getVideoFileName());
+        fileStorageService.deleteIfExists(product.getAudioFileName());
+        for (Instruction instruction : product.getInstructions()) {
+            fileStorageService.deleteIfExists(instruction.getFileName());
+        }
+
+        // Delete child instructions explicitly, then hard-delete product by id.
+        instructionRepository.deleteByProductId(id);
+        int deletedProducts = productRepository.deleteHardById(id);
+        if (deletedProducts > 0) {
+            redirectAttributes.addFlashAttribute("success", "Товар удален");
+        } else {
+            redirectAttributes.addFlashAttribute("error", "Не удалось удалить товар");
+        }
         return "redirect:/admin/products";
     }
 
@@ -342,5 +365,25 @@ public class AdminController {
             case "WINTER", "AUTUMN", "SUMMER", "NONE" -> value;
             default -> "NONE";
         };
+    }
+
+    private String resolvePublicBaseUrl(HttpServletRequest request) {
+        String forwardedProto = firstHeaderValue(request.getHeader("X-Forwarded-Proto"));
+        String forwardedHost = firstHeaderValue(request.getHeader("X-Forwarded-Host"));
+        String hostHeader = firstHeaderValue(request.getHeader("Host"));
+
+        String scheme = (forwardedProto == null || forwardedProto.isBlank()) ? "https" : forwardedProto;
+        String host = (forwardedHost == null || forwardedHost.isBlank()) ? hostHeader : forwardedHost;
+        if (host == null || host.isBlank()) {
+            host = request.getServerName();
+        }
+        return scheme + "://" + host;
+    }
+
+    private String firstHeaderValue(String headerValue) {
+        if (headerValue == null || headerValue.isBlank()) {
+            return null;
+        }
+        return headerValue.split(",")[0].trim();
     }
 }
