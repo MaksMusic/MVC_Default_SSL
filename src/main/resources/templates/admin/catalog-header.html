@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Админ - Контакты</title>
+    <title>Админ - Шапка сайта</title>
     <style>
+        *{box-sizing:border-box}
         body{font-family:Inter,Arial,sans-serif;margin:0;background:#f3f6fb;color:#111827}
         .layout{display:flex;flex-direction:row-reverse;min-height:100vh}
         .sidebar{width:260px;background:#0f172a;color:#fff;padding:18px;position:sticky;top:0;height:100vh}
@@ -12,9 +13,14 @@
         .menu a.active,.menu a:hover{background:#1e293b;color:#fff}
         .content{flex:1;padding:20px 20px 90px}
         @media(max-width:900px){.content{padding:20px 20px calc(130px + env(safe-area-inset-bottom,0px))}}
-        .card{background:#fff;border-radius:14px;padding:14px;box-shadow:0 8px 20px rgba(2,6,23,.08)}
-        textarea,button{width:100%;padding:10px;border-radius:8px;border:1px solid #d1d5db}
-        button{margin-top:8px;background:#1d4ed8;color:#fff;border:none;cursor:pointer}
+        .card{background:#fff;border-radius:14px;padding:14px;margin-bottom:12px;box-shadow:0 8px 20px rgba(2,6,23,.08)}
+        input,button{padding:9px;border-radius:8px;border:1px solid #d1d5db}
+        input[type="file"]{display:block;width:100%;padding:7px}
+        button{background:#1d4ed8;color:#fff;border:none;cursor:pointer}
+        .preview{max-width:320px;border-radius:12px;display:block;margin:8px 0}
+        .image-wrap{position:relative;display:inline-block}
+        .image-delete{position:absolute;top:8px;right:8px;background:#111827;color:#fff;border:none;border-radius:999px;padding:4px 10px;font-size:12px;cursor:pointer}
+        .hint{margin:6px 0 0;color:#64748b;font-size:13px}
         .admin-mfab-wrap{display:none}
         @media(max-width:900px){.layout{display:block}.sidebar{display:none}.admin-mfab-wrap{display:block}}
         .admin-mfab-backdrop{position:fixed;inset:0;z-index:998;background:rgba(15,23,42,.34);opacity:0;pointer-events:none;transition:opacity .2s ease}
@@ -26,7 +32,6 @@
         .admin-mfab-sheet a.active{background:#eff6ff;color:#1d4ed8}
         .admin-mfab-sheet hr{border:0;border-top:1px solid #e2e8f0;margin:8px 14px}
         .admin-mfab-btn{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(26px + env(safe-area-inset-bottom,0px));z-index:1000;width:56px;height:56px;border-radius:50%;border:none;cursor:pointer;background:linear-gradient(135deg,#1d4ed8,#7c3aed);color:#fff;font-size:22px;line-height:1;box-shadow:0 10px 30px rgba(29,78,216,.42)}
-        .admin-mfab-btn:active{transform:translateX(-50%) scale(.95)}
     </style>
 </head>
 <body>
@@ -37,8 +42,8 @@
             <a th:href="@{/admin/catalogs}">Каталоги</a>
             <a th:href="@{/admin/products}">Товары</a>
             <a th:href="@{/admin/reviews}">Отзывы</a>
-            <a th:href="@{/admin/catalog-header}">Шапка сайта</a>
-            <a class="active" th:href="@{/admin/contacts}">Контакты</a>
+            <a class="active" th:href="@{/admin/catalog-header}">Шапка сайта</a>
+            <a th:href="@{/admin/contacts}">Контакты</a>
             <a th:href="@{/admin/brand}">О бренде</a>
             <a th:href="@{/admin/weather}">Погода</a>
             <a th:href="@{/}">На сайт</a>
@@ -46,11 +51,38 @@
         </nav>
     </aside>
     <main class="content">
-        <h1>Редактирование контактов</h1>
+        <h1>Шапка сайта</h1>
         <section class="card">
-            <form th:action="@{/admin/contacts}" method="post">
-                <textarea name="content" rows="12" th:text="${content}" placeholder="Телефоны, email, адрес..."></textarea>
-                <button type="submit">Сохранить</button>
+            <form th:action="@{/admin/catalog-header}" method="post" enctype="multipart/form-data">
+                <label>Картинка шапки для WEB</label>
+                <input type="file" name="imageFile" accept="image/*">
+                <p class="hint">Рекомендуемый размер шапки: 1920x700 px (допустимо 1600x600, минимум 1366x512).</p>
+                <div class="image-wrap" th:if="${catalogHeaderImage != null and !#strings.isEmpty(catalogHeaderImage)}">
+                    <img class="preview" th:src="@{/files(path=${catalogHeaderImage})}" alt="Шапка каталога">
+                    <button type="submit"
+                            class="image-delete"
+                            th:formaction="@{/admin/catalog-header/delete}"
+                            formmethod="post"
+                            name="target"
+                            value="web"
+                            title="Удалить web-шапку">✕</button>
+                </div>
+                <label style="margin-top:8px;display:block;">Картинка шапки для MOBILE</label>
+                <input type="file" name="imageFileMobile" accept="image/*">
+                <p class="hint">Рекомендуемый размер mobile-шапки: 1080x1440 px (или 900x1200).</p>
+                <div class="image-wrap" th:if="${catalogHeaderImageMobile != null and !#strings.isEmpty(catalogHeaderImageMobile)}">
+                    <img class="preview" th:src="@{/files(path=${catalogHeaderImageMobile})}" alt="Шапка каталога мобильная">
+                    <button type="submit"
+                            class="image-delete"
+                            th:formaction="@{/admin/catalog-header/delete}"
+                            formmethod="post"
+                            name="target"
+                            value="mobile"
+                            title="Удалить mobile-шапку">✕</button>
+                </div>
+                <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px;">
+                    <button type="submit">Сохранить шапку</button>
+                </div>
             </form>
         </section>
     </main>

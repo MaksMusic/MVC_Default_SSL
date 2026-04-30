@@ -6,66 +6,44 @@
     <title th:text="${product.name}">Товар</title>
     <style>
         *{box-sizing:border-box}
-        body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;margin:0;background:linear-gradient(165deg,#f8fafc,#eef2ff 45%,#f0f9ff);color:#334155}
-        .topbar{position:sticky;top:0;z-index:10;display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;padding:14px 20px;background:rgba(255,255,255,.85);backdrop-filter:blur(10px);border-bottom:1px solid rgba(148,163,184,.2);box-shadow:0 1px 0 rgba(255,255,255,.8)}
-        .topbar a{color:#475569;text-decoration:none;font-weight:600;font-size:14px;padding:8px 16px;border-radius:999px;border:1px solid rgba(148,163,184,.35);background:#fff;transition:color .2s,border-color .2s,box-shadow .2s}
-        .topbar a:hover{color:#2563eb;border-color:#93c5fd;box-shadow:0 2px 12px rgba(37,99,235,.12)}
+        body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;margin:0;background:#f3ece3;color:#2f2a26;overflow-x:hidden}
+        .topbar{position:sticky;top:0;z-index:10;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;padding:12px 16px;background:#f8f3ed;border-bottom:1px solid #dfd3c6}
+        .topbar a{color:#3b342f;text-decoration:none;font-weight:500;font-size:14px;padding:7px 14px;border-radius:999px;border:1px solid #d6c8b8;background:#fcf9f4}
         @media(max-width:768px){.topbar{display:none}}
-        .wrap{max-width:1020px;margin:0 auto;padding:20px 20px calc(118px + env(safe-area-inset-bottom,0px))}
-        .brand{display:inline-block;font-size:26px;font-weight:800;letter-spacing:.06em;background:linear-gradient(105deg,#2563eb,#7c3aed,#db2777);-webkit-background-clip:text;background-clip:text;color:transparent}
-        .page-head{margin-top:12px}
-        .page-head h1{margin:0;color:#0f172a;font-size:1.35rem}
-        .hero{margin-top:12px;background:#fff;border:1px solid rgba(148,163,184,.25);border-radius:18px;padding:16px;box-shadow:0 8px 28px rgba(15,23,42,.06)}
+        .wrap{max-width:1020px;margin:0 auto;padding:18px 18px calc(118px + env(safe-area-inset-bottom,0px))}
+        h1{margin:0 0 12px;font-size:38px;color:#1e1a17}
+        .hero{background:#f8f2ea;border:1px solid #ddcfbf;border-radius:18px;padding:14px;box-shadow:0 4px 16px rgba(58,45,31,.07)}
         .hero img,.hero video{max-width:100%;border-radius:12px}
-        .hero p{color:#64748b;white-space:pre-line}
-        .card{background:#fff;border:1px solid rgba(148,163,184,.25);border-radius:14px;padding:14px;margin-top:12px;box-shadow:0 6px 20px rgba(15,23,42,.05)}
-        .card h3{color:#0f172a}
-        .btn{display:inline-block;margin:6px 6px 0 0;padding:9px 14px;border-radius:10px;background:linear-gradient(105deg,#2563eb,#7c3aed);color:#fff;text-decoration:none;font-weight:600;font-size:14px}
-        .section-title{margin-top:20px;color:#0f172a}
-        .mobile-nav{position:fixed;left:14px;right:14px;bottom:calc(28px + env(safe-area-inset-bottom,0px));z-index:50;background:rgba(255,255,255,.97);border:1px solid rgba(148,163,184,.28);border-radius:18px;padding:12px 10px;display:none;justify-content:space-around;align-items:center;box-shadow:0 10px 36px rgba(15,23,42,.1)}
-        .mobile-nav a{text-decoration:none;color:#475569;font-size:12px;font-weight:600}
-        @media(max-width:768px){.mobile-nav{display:flex}.brand{font-size:22px}}
+        .hero p{color:#5f5852;white-space:pre-line;overflow-wrap:anywhere;word-break:break-word}
+        .actions{display:grid;gap:8px;margin-top:12px}
+        .btn{display:block;width:100%;text-align:center;padding:9px 12px;border-radius:10px;background:#fcf9f4;border:1px solid #cfbeaa;color:#2f2a26;text-decoration:none;font-weight:500;font-size:14px}
+        .mobile-nav{position:fixed;left:14px;right:14px;bottom:calc(24px + env(safe-area-inset-bottom,0px));z-index:50;background:#f9f4ed;border:1px solid #d8caba;border-radius:16px;padding:11px 10px;display:none;justify-content:space-around;align-items:center;box-shadow:0 8px 30px rgba(43,34,28,.11)}
+        .mobile-nav a{text-decoration:none;color:#4c443d;font-size:12px;font-weight:600}
+        @media(max-width:768px){.mobile-nav{display:flex}h1{font-size:32px}}
     </style>
 </head>
 <body>
 <nav class="topbar">
-    <a th:href="@{/}">Главная</a>
     <a th:href="@{/catalog}">Каталог</a>
     <a th:href="@{/about}">О бренде</a>
     <a th:href="@{/contacts}">Контакты</a>
     <a th:href="@{/admin}">Админ</a>
 </nav>
 <div class="wrap">
-    <div class="brand">Devi Guide</div>
-    <div class="page-head">
-        <h1 th:text="${product.name}">Товар</h1>
-    </div>
-
+    <h1 th:text="${product.name}">Товар</h1>
     <section class="hero">
         <img th:if="${product.imageFileName}" th:src="@{/files(path=${product.imageFileName})}" alt="Фото">
         <p th:text="${product.shortDescription}">Описание товара</p>
         <video th:if="${product.videoFileName}" controls th:src="@{/files(path=${product.videoFileName})}" style="margin-top:10px;"></video>
         <audio th:if="${product.audioFileName}" controls th:src="@{/files(path=${product.audioFileName})}" style="margin-top:10px;width:100%;"></audio>
+        <div class="actions">
+            <a class="btn" th:if="${product.instructionUrl != null and !#strings.isEmpty(product.instructionUrl)}" th:href="${product.instructionUrl}" target="_blank" rel="noopener noreferrer">Инструкция</a>
+            <a class="btn" th:href="@{/product/{slug}/gift(slug=${product.slug})}">Подарок</a>
+            <a class="btn" th:if="${product.wbProductUrl != null and !#strings.isEmpty(product.wbProductUrl)}" th:href="${product.wbProductUrl}" target="_blank" rel="noopener noreferrer">Найти на WB</a>
+        </div>
     </section>
-
-    <h2 class="section-title">Инструкции</h2>
-    <article class="card" th:each="instruction : ${product.instructions}">
-        <h3 th:text="${instruction.title}">Название</h3>
-        <p><b>Тип:</b> <span th:text="${instruction.type}">TEXT</span></p>
-        <div th:if="${instruction.contentText}">
-            <p th:text="${instruction.contentText}">Текст</p>
-        </div>
-        <div th:if="${instruction.externalUrl}">
-            <a class="btn" th:href="${instruction.externalUrl}" target="_blank">Открыть</a>
-        </div>
-        <div th:if="${instruction.fileName}">
-            <a class="btn" th:href="@{/files(path=${instruction.fileName})}" target="_blank">Открыть</a>
-            <a class="btn" th:href="@{/files(path=${instruction.fileName},download=true)}">Скачать</a>
-        </div>
-    </article>
 </div>
 <nav class="mobile-nav">
-    <a th:href="@{/}">Главная</a>
     <a th:href="@{/catalog}">Каталог</a>
     <a th:href="@{/about}">Бренд</a>
     <a th:href="@{/contacts}">Контакты</a>

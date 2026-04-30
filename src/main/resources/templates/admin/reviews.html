@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Админ - Контакты</title>
+    <title>Админ - Отзывы</title>
     <style>
         body{font-family:Inter,Arial,sans-serif;margin:0;background:#f3f6fb;color:#111827}
         .layout{display:flex;flex-direction:row-reverse;min-height:100vh}
@@ -11,12 +11,18 @@
         .menu a{display:block;color:#cbd5e1;text-decoration:none;padding:10px;border-radius:10px;margin-bottom:6px}
         .menu a.active,.menu a:hover{background:#1e293b;color:#fff}
         .content{flex:1;padding:20px 20px 90px}
-        @media(max-width:900px){.content{padding:20px 20px calc(130px + env(safe-area-inset-bottom,0px))}}
+        .flash{margin-top:12px;padding:10px 12px;border-radius:10px;font-weight:600}
+        .flash.error{background:#fef2f2;color:#b91c1c;border:1px solid #fecaca}
+        .flash.success{background:#ecfdf5;color:#047857;border:1px solid #a7f3d0}
+        .grid{display:grid;gap:12px;margin-top:12px;grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
         .card{background:#fff;border-radius:14px;padding:14px;box-shadow:0 8px 20px rgba(2,6,23,.08)}
-        textarea,button{width:100%;padding:10px;border-radius:8px;border:1px solid #d1d5db}
-        button{margin-top:8px;background:#1d4ed8;color:#fff;border:none;cursor:pointer}
+        .card img{width:100%;height:220px;object-fit:cover;border-radius:12px;background:#e2e8f0}
+        .meta{margin-top:8px;color:#475569;font-size:14px}
+        .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+        .btn{padding:8px 12px;border-radius:8px;border:1px solid #cbd5e1;background:#fff;color:#0f172a;text-decoration:none;cursor:pointer}
+        .btn.danger{background:#ef4444;border-color:#ef4444;color:#fff}
         .admin-mfab-wrap{display:none}
-        @media(max-width:900px){.layout{display:block}.sidebar{display:none}.admin-mfab-wrap{display:block}}
+        @media(max-width:900px){.layout{display:block}.sidebar{display:none}.admin-mfab-wrap{display:block}.content{padding:20px 20px calc(130px + env(safe-area-inset-bottom,0px))}}
         .admin-mfab-backdrop{position:fixed;inset:0;z-index:998;background:rgba(15,23,42,.34);opacity:0;pointer-events:none;transition:opacity .2s ease}
         .admin-mfab-backdrop.open{opacity:1;pointer-events:auto}
         .admin-mfab-sheet{position:fixed;left:18px;right:18px;bottom:calc(96px + env(safe-area-inset-bottom,0px));z-index:999;max-height:min(52vh,340px);overflow-y:auto;background:#fff;border-radius:20px;padding:8px 0;border:1px solid #e2e8f0;box-shadow:0 16px 48px rgba(0,0,0,.2);transform:translateY(18px) scale(.98);opacity:0;pointer-events:none;transition:transform .22s ease,opacity .22s ease}
@@ -26,7 +32,6 @@
         .admin-mfab-sheet a.active{background:#eff6ff;color:#1d4ed8}
         .admin-mfab-sheet hr{border:0;border-top:1px solid #e2e8f0;margin:8px 14px}
         .admin-mfab-btn{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(26px + env(safe-area-inset-bottom,0px));z-index:1000;width:56px;height:56px;border-radius:50%;border:none;cursor:pointer;background:linear-gradient(135deg,#1d4ed8,#7c3aed);color:#fff;font-size:22px;line-height:1;box-shadow:0 10px 30px rgba(29,78,216,.42)}
-        .admin-mfab-btn:active{transform:translateX(-50%) scale(.95)}
     </style>
 </head>
 <body>
@@ -36,9 +41,9 @@
         <nav class="menu">
             <a th:href="@{/admin/catalogs}">Каталоги</a>
             <a th:href="@{/admin/products}">Товары</a>
-            <a th:href="@{/admin/reviews}">Отзывы</a>
+            <a class="active" th:href="@{/admin/reviews}">Отзывы</a>
             <a th:href="@{/admin/catalog-header}">Шапка сайта</a>
-            <a class="active" th:href="@{/admin/contacts}">Контакты</a>
+            <a th:href="@{/admin/contacts}">Контакты</a>
             <a th:href="@{/admin/brand}">О бренде</a>
             <a th:href="@{/admin/weather}">Погода</a>
             <a th:href="@{/}">На сайт</a>
@@ -46,13 +51,22 @@
         </nav>
     </aside>
     <main class="content">
-        <h1>Редактирование контактов</h1>
-        <section class="card">
-            <form th:action="@{/admin/contacts}" method="post">
-                <textarea name="content" rows="12" th:text="${content}" placeholder="Телефоны, email, адрес..."></textarea>
-                <button type="submit">Сохранить</button>
-            </form>
-        </section>
+        <h1>Отзывы клиентов</h1>
+        <div class="flash error" th:if="${error != null}" th:text="${error}">Ошибка</div>
+        <div class="flash success" th:if="${success != null}" th:text="${success}">Успех</div>
+        <div class="grid">
+            <section class="card" th:each="review : ${reviews}">
+                <img th:src="@{/files(path=${review.photoFileName})}" alt="Отзыв">
+                <div class="meta"><b>Товар:</b> <span th:text="${review.product.name}">Товар</span></div>
+                <div class="meta"><b>Дата:</b> <span th:text="${#temporals.format(review.createdAt, 'dd.MM.yyyy HH:mm')}">00.00.0000 00:00</span></div>
+                <div class="row">
+                    <a class="btn" th:href="@{/files(path=${review.photoFileName},download=true)}">Скачать фото</a>
+                    <form th:action="@{/admin/reviews/{id}/delete(id=${review.id})}" method="post" onsubmit="return confirm('Удалить отзыв?');">
+                        <button class="btn danger" type="submit">Удалить</button>
+                    </form>
+                </div>
+            </section>
+        </div>
     </main>
 </div>
 <div class="admin-mfab-wrap">

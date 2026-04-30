@@ -6,66 +6,57 @@
     <title th:text="${category.name}">Товары каталога</title>
     <style>
         *{box-sizing:border-box}
-        body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;margin:0;background:linear-gradient(165deg,#f8fafc,#eef2ff 45%,#f0f9ff);color:#334155}
-        .topbar{position:sticky;top:0;z-index:10;display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;padding:14px 20px;background:rgba(255,255,255,.85);backdrop-filter:blur(10px);border-bottom:1px solid rgba(148,163,184,.2);box-shadow:0 1px 0 rgba(255,255,255,.8)}
-        .topbar a{color:#475569;text-decoration:none;font-weight:600;font-size:14px;padding:8px 16px;border-radius:999px;border:1px solid rgba(148,163,184,.35);background:#fff;transition:color .2s,border-color .2s,box-shadow .2s}
-        .topbar a:hover{color:#2563eb;border-color:#93c5fd;box-shadow:0 2px 12px rgba(37,99,235,.12)}
+        body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;margin:0;background:#f3ece3;color:#2f2a26;overflow-x:hidden}
+        .topbar{position:sticky;top:0;z-index:10;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;padding:12px 16px;background:#f8f3ed;border-bottom:1px solid #dfd3c6}
+        .topbar a{color:#3b342f;text-decoration:none;font-weight:500;font-size:14px;padding:7px 14px;border-radius:999px;border:1px solid #d6c8b8;background:#fcf9f4}
         @media(max-width:768px){.topbar{display:none}}
-        .wrap{max-width:1100px;margin:0 auto;padding:20px 20px calc(118px + env(safe-area-inset-bottom,0px))}
-        .brand{display:inline-block;font-size:26px;font-weight:800;letter-spacing:.06em;background:linear-gradient(105deg,#2563eb,#7c3aed,#db2777);-webkit-background-clip:text;background-clip:text;color:transparent}
-        .page-head{margin-top:12px}
-        .page-head h1{margin:0;color:#0f172a;font-size:1.5rem}
-        .grid{margin-top:18px;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
-        .card{background:#fff;border:1px solid rgba(148,163,184,.25);border-radius:18px;padding:14px;box-shadow:0 8px 28px rgba(15,23,42,.06)}
-        .card img{width:100%;height:170px;object-fit:cover;border-radius:12px;background:#e2e8f0}
-        .card h3{margin:8px 0 4px;color:#0f172a}
-        .card p{
-            margin:0;
-            color:#64748b;
-            font-size:14px;
-            line-height:1.35;
-            white-space:pre-line;
-            overflow-wrap:anywhere;
-            word-break:break-word;
-            display:-webkit-box;
-            -webkit-box-orient:vertical;
-            -webkit-line-clamp:5;
-            overflow:hidden;
-            min-height:calc(1.35em * 5);
+        .wrap{max-width:1120px;margin:0 auto;padding:18px 18px calc(118px + env(safe-area-inset-bottom,0px))}
+        h1{margin:0;font-size:42px;color:#1d1a17}
+        .grid{margin-top:18px;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+        .card{background:#f8f2ea;border:1px solid #ddcfbf;border-radius:18px;padding:12px;box-shadow:0 4px 16px rgba(58,45,31,.07)}
+        .card-link{text-decoration:none;color:inherit;display:block}
+        .card img{width:100%;height:165px;object-fit:cover;border-radius:12px;background:#efe3d4}
+        .card h3{margin:10px 0 4px;font-size:34px;line-height:1;color:#12100f}
+        .card p{margin:0;color:#5f5852;font-size:14px;line-height:1.35;white-space:pre-line;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:5;overflow:hidden;min-height:calc(1.35em * 5);overflow-wrap:anywhere;word-break:break-word}
+        .actions{margin-top:12px;display:grid;gap:8px}
+        .btn{display:block;width:100%;text-align:center;padding:9px 12px;border-radius:10px;background:#fcf9f4;border:1px solid #cfbeaa;color:#2f2a26;text-decoration:none;font-weight:500;font-size:14px}
+        .mobile-nav{position:fixed;left:14px;right:14px;bottom:calc(24px + env(safe-area-inset-bottom,0px));z-index:50;background:#f9f4ed;border:1px solid #d8caba;border-radius:16px;padding:11px 10px;display:none;justify-content:space-around;align-items:center;box-shadow:0 8px 30px rgba(43,34,28,.11)}
+        .mobile-nav a{text-decoration:none;color:#4c443d;font-size:12px;font-weight:600}
+        @media(max-width:768px){
+            .mobile-nav{display:flex}
+            h1{font-size:34px}
+            .card h3{font-size:28px}
         }
-        .btn{display:inline-block;margin-top:10px;margin-right:8px;padding:10px 16px;border-radius:10px;background:linear-gradient(105deg,#2563eb,#7c3aed);color:#fff;text-decoration:none;font-weight:600;font-size:14px}
-        .btn.wb{background:linear-gradient(105deg,#a16207,#d97706)}
-        .mobile-nav{position:fixed;left:14px;right:14px;bottom:calc(28px + env(safe-area-inset-bottom,0px));z-index:50;background:rgba(255,255,255,.97);border:1px solid rgba(148,163,184,.28);border-radius:18px;padding:12px 10px;display:none;justify-content:space-around;align-items:center;box-shadow:0 10px 36px rgba(15,23,42,.1)}
-        .mobile-nav a{text-decoration:none;color:#475569;font-size:12px;font-weight:600}
-        @media(max-width:768px){.mobile-nav{display:flex}.brand{font-size:22px}}
     </style>
 </head>
 <body>
 <nav class="topbar">
-    <a th:href="@{/}">Главная</a>
     <a th:href="@{/catalog}">Каталог</a>
     <a th:href="@{/about}">О бренде</a>
     <a th:href="@{/contacts}">Контакты</a>
     <a th:href="@{/admin}">Админ</a>
 </nav>
 <div class="wrap">
-    <div class="brand">Devi Guide</div>
-    <div class="page-head">
-        <h1 th:text="${category.name}">Каталог</h1>
-    </div>
+    <h1 th:text="${category.name}">Каталог</h1>
     <div class="grid">
         <article class="card" th:each="product : ${products}">
-            <img th:if="${product.imageFileName}" th:src="@{/files(path=${product.imageFileName})}" alt="Фото товара">
-            <h3 th:text="${product.name}">Товар</h3>
-            <p th:text="${product.shortDescription}">Описание</p>
-            <a class="btn" th:href="@{/product/{slug}(slug=${product.slug})}">Подробнее</a>
-            <a class="btn wb" th:if="${product.wbProductUrl != null and !#strings.isEmpty(product.wbProductUrl)}"
-               th:href="${product.wbProductUrl}" target="_blank" rel="noopener noreferrer">Найти на WB</a>
+            <a class="card-link" th:href="@{/product/{slug}(slug=${product.slug})}">
+                <img th:if="${product.imageFileName}" th:src="@{/files(path=${product.imageFileName})}" alt="Фото товара">
+                <div th:if="${product.imageFileName == null}" style="width:100%;height:165px;border-radius:12px;background:#efe3d4;"></div>
+                <h3 th:text="${product.name}">Товар</h3>
+                <p th:text="${product.shortDescription}">Описание</p>
+            </a>
+            <div class="actions">
+                <a class="btn" th:if="${product.instructionUrl != null and !#strings.isEmpty(product.instructionUrl)}"
+                   th:href="${product.instructionUrl}" target="_blank" rel="noopener noreferrer">Инструкция</a>
+                <a class="btn" th:href="@{/product/{slug}/gift(slug=${product.slug})}">Подарок</a>
+                <a class="btn" th:if="${product.wbProductUrl != null and !#strings.isEmpty(product.wbProductUrl)}"
+                   th:href="${product.wbProductUrl}" target="_blank" rel="noopener noreferrer">Найти на WB</a>
+            </div>
         </article>
     </div>
 </div>
 <nav class="mobile-nav">
-    <a th:href="@{/}">Главная</a>
     <a th:href="@{/catalog}">Каталог</a>
     <a th:href="@{/about}">Бренд</a>
     <a th:href="@{/contacts}">Контакты</a>

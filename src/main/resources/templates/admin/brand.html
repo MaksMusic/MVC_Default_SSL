@@ -36,6 +36,8 @@
         <nav class="menu">
             <a th:href="@{/admin/catalogs}">Каталоги</a>
             <a th:href="@{/admin/products}">Товары</a>
+            <a th:href="@{/admin/reviews}">Отзывы</a>
+            <a th:href="@{/admin/catalog-header}">Шапка сайта</a>
             <a th:href="@{/admin/contacts}">Контакты</a>
             <a class="active" th:href="@{/admin/brand}">О бренде</a>
             <a th:href="@{/admin/weather}">Погода</a>
@@ -58,6 +60,8 @@
     <nav class="admin-mfab-sheet" id="adminMfabSheet" aria-hidden="true">
         <a th:href="@{/admin/catalogs}" th:classappend="${activeMenu == 'catalogs'} ? 'active'">Каталоги</a>
         <a th:href="@{/admin/products}" th:classappend="${activeMenu == 'products'} ? 'active'">Товары</a>
+        <a th:href="@{/admin/reviews}" th:classappend="${activeMenu == 'reviews'} ? 'active'">Отзывы</a>
+        <a th:href="@{/admin/catalog-header}" th:classappend="${activeMenu == 'catalog-header'} ? 'active'">Шапка сайта</a>
         <a th:href="@{/admin/contacts}" th:classappend="${activeMenu == 'contacts'} ? 'active'">Контакты</a>
         <a th:href="@{/admin/brand}" th:classappend="${activeMenu == 'brand'} ? 'active'">О бренде</a>
         <a th:href="@{/admin/weather}" th:classappend="${activeMenu == 'weather'} ? 'active'">Погода</a>

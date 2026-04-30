@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Админ - Товары</title>
     <style>
+        *{box-sizing:border-box}
         body{font-family:Inter,Arial,sans-serif;margin:0;background:#f3f6fb;color:#111827}
         .layout{display:flex;flex-direction:row-reverse;min-height:100vh}
         .sidebar{width:260px;background:#0f172a;color:#fff;padding:18px;position:sticky;top:0;height:100vh}
@@ -15,10 +16,18 @@
         .toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
         .btn{padding:9px 12px;border-radius:8px;border:none;background:#1d4ed8;color:#fff;text-decoration:none;display:inline-block}
         .card{background:#fff;border-radius:14px;padding:14px;margin-top:12px;box-shadow:0 8px 20px rgba(2,6,23,.08)}
+        .product-head{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap}
+        .thumb{width:86px;height:86px;border-radius:12px;object-fit:cover;background:#e2e8f0;border:1px solid #e2e8f0}
+        .desc{color:#475569;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}
+        .qr{max-width:150px;background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:6px}
         .flash{margin-top:12px;padding:10px 12px;border-radius:10px;font-weight:600}
         .flash.error{background:#fef2f2;color:#b91c1c;border:1px solid #fecaca}
         .flash.success{background:#ecfdf5;color:#047857;border:1px solid #a7f3d0}
         .row{display:flex;gap:8px;flex-wrap:wrap}
+        .row form{margin:0}
+        .qr-link{overflow-wrap:anywhere;word-break:break-word}
+        @media(max-width:900px){.row .btn, .row button.btn{width:100%;text-align:center}}
+        @media(max-width:900px){.product-head > div{min-width:0 !important}}
         .admin-mfab-wrap{display:none}
         @media(max-width:900px){.layout{display:block}.sidebar{display:none}.admin-mfab-wrap{display:block}}
         .admin-mfab-backdrop{position:fixed;inset:0;z-index:998;background:rgba(15,23,42,.34);opacity:0;pointer-events:none;transition:opacity .2s ease}
@@ -40,6 +49,8 @@
         <nav class="menu">
             <a th:href="@{/admin/catalogs}">Каталоги</a>
             <a class="active" th:href="@{/admin/products}">Товары</a>
+            <a th:href="@{/admin/reviews}">Отзывы</a>
+            <a th:href="@{/admin/catalog-header}">Шапка сайта</a>
             <a th:href="@{/admin/contacts}">Контакты</a>
             <a th:href="@{/admin/brand}">О бренде</a>
             <a th:href="@{/admin/weather}">Погода</a>
@@ -55,11 +66,17 @@
         <div class="flash error" th:if="${error != null}" th:text="${error}">Ошибка</div>
         <div class="flash success" th:if="${success != null}" th:text="${success}">Успех</div>
         <section class="card" th:each="product : ${products}">
-            <h3 th:text="${product.name}">Товар</h3>
-            <p th:text="${product.shortDescription}">Описание</p>
+            <div class="product-head">
+                <img class="thumb" th:if="${product.imageFileName != null and !#strings.isEmpty(product.imageFileName)}" th:src="@{/files(path=${product.imageFileName})}" alt="Фото">
+                <div class="thumb" th:if="${product.imageFileName == null or #strings.isEmpty(product.imageFileName)}"></div>
+                <div style="flex:1;min-width:220px;">
+                    <h3 th:text="${product.name}" style="margin:0 0 4px;">Товар</h3>
+                    <p class="desc" th:text="${product.shortDescription}">Описание</p>
+                </div>
+            </div>
             <p><b>Каталог:</b> <span th:text="${product.category.name}">Каталог</span></p>
-            <p><b>QR ссылка:</b> <a th:href="${qrService.productUrl(baseUrl, product.slug)}" th:text="${qrService.productUrl(baseUrl, product.slug)}"></a></p>
-            <img th:src="'data:image/png;base64,' + ${qrService.toBase64Png(qrService.productUrl(baseUrl, product.slug))}" alt="QR код" style="max-width:180px;">
+            <p class="qr-link"><b>QR ссылка:</b> <a th:href="${qrService.productUrl(baseUrl, product.slug)}" th:text="${qrService.productUrl(baseUrl, product.slug)}"></a></p>
+            <img class="qr" th:src="'data:image/png;base64,' + ${qrService.toBase64Png(qrService.productUrl(baseUrl, product.slug))}" alt="QR код">
             <div class="row" style="margin-top:10px;">
                 <a class="btn" th:href="@{/admin/products/{id}/edit(id=${product.id})}">Редактировать</a>
                 <form th:action="@{/admin/products/{id}/delete(id=${product.id})}" method="post"
@@ -75,6 +92,8 @@
     <nav class="admin-mfab-sheet" id="adminMfabSheet" aria-hidden="true">
         <a th:href="@{/admin/catalogs}" th:classappend="${activeMenu == 'catalogs'} ? 'active'">Каталоги</a>
         <a th:href="@{/admin/products}" th:classappend="${activeMenu == 'products'} ? 'active'">Товары</a>
+        <a th:href="@{/admin/reviews}" th:classappend="${activeMenu == 'reviews'} ? 'active'">Отзывы</a>
+        <a th:href="@{/admin/catalog-header}" th:classappend="${activeMenu == 'catalog-header'} ? 'active'">Шапка сайта</a>
         <a th:href="@{/admin/contacts}" th:classappend="${activeMenu == 'contacts'} ? 'active'">Контакты</a>
         <a th:href="@{/admin/brand}" th:classappend="${activeMenu == 'brand'} ? 'active'">О бренде</a>
         <a th:href="@{/admin/weather}" th:classappend="${activeMenu == 'weather'} ? 'active'">Погода</a>

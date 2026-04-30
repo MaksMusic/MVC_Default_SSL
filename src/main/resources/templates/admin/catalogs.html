@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Админ - Каталоги</title>
     <style>
+        *{box-sizing:border-box}
         body{font-family:Inter,Arial,sans-serif;margin:0;background:#f3f6fb;color:#111827}
         .layout{display:flex;flex-direction:row-reverse;min-height:100vh}
         .sidebar{width:260px;background:#0f172a;color:#fff;padding:18px;position:sticky;top:0;height:100vh}
@@ -12,11 +13,34 @@
         .menu a{display:block;color:#cbd5e1;text-decoration:none;padding:10px;border-radius:10px;margin-bottom:6px}
         .menu a.active,.menu a:hover{background:#1e293b;color:#fff}
         .content{flex:1;padding:20px 20px 90px}
-        @media(max-width:900px){.content{padding:20px 20px calc(130px + env(safe-area-inset-bottom,0px))}}
+        @media(max-width:900px){.content{padding:16px 16px calc(130px + env(safe-area-inset-bottom,0px))}}
+        .topline{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+        .topline h1{margin:0}
+        .badge{padding:6px 10px;border-radius:999px;background:#e2e8f0;color:#334155;font-size:12px;font-weight:700}
         .card{background:#fff;border-radius:14px;padding:14px;margin-bottom:12px;box-shadow:0 8px 20px rgba(2,6,23,.08)}
-        input,button{padding:9px;border-radius:8px;border:1px solid #d1d5db}
+        .create-grid{display:grid;gap:10px;grid-template-columns:1fr 1fr auto}
+        @media(max-width:900px){.create-grid{grid-template-columns:1fr}}
+        input,button{padding:10px;border-radius:10px;border:1px solid #d1d5db}
+        input[type="file"]{padding:8px}
+        .hint{margin:6px 0 0;color:#64748b;font-size:13px}
         button{background:#1d4ed8;color:#fff;border:none;cursor:pointer}
-        .row{display:flex;gap:8px;flex-wrap:wrap}
+        .danger{background:#ef4444}
+        .catalog-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+        .catalog-card{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:10px}
+        .preview{width:100%;height:150px;border-radius:12px;object-fit:cover;background:#e2e8f0}
+        .placeholder{width:100%;height:150px;border-radius:12px;background:#eef2ff;border:1px dashed #cbd5e1}
+        .image-wrap{position:relative}
+        .image-delete{position:absolute;top:8px;right:8px;background:#111827;color:#fff;border:none;border-radius:999px;padding:4px 10px;font-size:12px;cursor:pointer}
+        .title-row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+        .title-row h3{margin:0;font-size:18px}
+        .meta{margin:0;color:#64748b;font-size:13px}
+        .edit-form{display:grid;gap:8px}
+        .actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+        .actions label{grid-column:1/-1;font-size:13px;color:#475569;display:flex;gap:8px;align-items:center}
+        .actions label input{margin:0;width:auto}
+        @media(max-width:480px){.actions{grid-template-columns:1fr}}
+        .flash{margin:0 0 12px;padding:10px 12px;border-radius:10px;font-weight:600}
+        .flash.error{background:#fef2f2;color:#b91c1c;border:1px solid #fecaca}
         .admin-mfab-wrap{display:none}
         @media(max-width:900px){.layout{display:block}.sidebar{display:none}.admin-mfab-wrap{display:block}}
         .admin-mfab-backdrop{position:fixed;inset:0;z-index:998;background:rgba(15,23,42,.34);opacity:0;pointer-events:none;transition:opacity .2s ease}
@@ -38,6 +62,8 @@
         <nav class="menu">
             <a class="active" th:href="@{/admin/catalogs}">Каталоги</a>
             <a th:href="@{/admin/products}">Товары</a>
+            <a th:href="@{/admin/reviews}">Отзывы</a>
+            <a th:href="@{/admin/catalog-header}">Шапка сайта</a>
             <a th:href="@{/admin/contacts}">Контакты</a>
             <a th:href="@{/admin/brand}">О бренде</a>
             <a th:href="@{/admin/weather}">Погода</a>
@@ -46,28 +72,47 @@
         </nav>
     </aside>
     <main class="content">
-        <h1>Каталоги</h1>
-        <section class="card" th:if="${error != null}">
-            <p style="margin:0;color:#b91c1c;font-weight:600;" th:text="${error}">Ошибка</p>
-        </section>
+        <div class="topline">
+            <h1>Каталоги</h1>
+            <span class="badge" th:text="'Всего: ' + ${#lists.size(categories)}">Всего: 0</span>
+        </div>
+        <div class="flash error" th:if="${error != null}" th:text="${error}">Ошибка</div>
         <section class="card">
-            <h3>Добавить каталог</h3>
-            <form th:action="@{/admin/catalogs}" method="post" class="row">
+            <h3 style="margin-top:0;">Создать каталог</h3>
+            <form th:action="@{/admin/catalogs}" method="post" enctype="multipart/form-data" class="create-grid">
                 <input name="name" placeholder="Название каталога" required>
+                <input type="file" name="imageFile" accept="image/*">
                 <button type="submit">Добавить</button>
             </form>
+            <p class="hint">Рекомендуемый размер картинки каталога: 1200x800 px.</p>
         </section>
-        <section class="card" th:each="category : ${categories}">
-            <h3 th:text="${category.name}">Каталог</h3>
-            <p th:text="'Товаров: ' + ${#lists.size(category.products)}">Товаров: 0</p>
-            <form th:action="@{/admin/catalogs/{id}/rename(id=${category.id})}" method="post" class="row">
-                <input name="name" th:value="${category.name}" required>
-                <button type="submit">Переименовать</button>
-            </form>
-            <form th:action="@{/admin/catalogs/{id}/delete(id=${category.id})}" method="post"
-                  onsubmit="return confirm('Удалить каталог и все товары внутри?');">
-                <button type="submit">Удалить каталог</button>
-            </form>
+
+        <section class="catalog-grid">
+            <article class="catalog-card" th:each="category : ${categories}">
+                <div class="image-wrap" th:if="${category.imageFileName != null and !#strings.isEmpty(category.imageFileName)}">
+                    <img class="preview" th:src="@{/files(path=${category.imageFileName})}" alt="Картинка каталога">
+                    <form th:action="@{/admin/catalogs/{id}/image/delete(id=${category.id})}" method="post">
+                        <button type="submit" class="image-delete" title="Удалить картинку">✕</button>
+                    </form>
+                </div>
+                <div class="placeholder" th:if="${category.imageFileName == null or #strings.isEmpty(category.imageFileName)}"></div>
+                <div class="title-row">
+                    <h3 th:text="${category.name}">Каталог</h3>
+                    <span class="badge" th:text="'Товаров: ' + ${#lists.size(category.products)}">0</span>
+                </div>
+                <form class="edit-form" th:action="@{/admin/catalogs/{id}/rename(id=${category.id})}" method="post" enctype="multipart/form-data">
+                    <input name="name" th:value="${category.name}" required>
+                    <input type="file" name="imageFile" accept="image/*">
+                    <p class="meta">Обновить название/картинку</p>
+                    <div class="actions">
+                        <button type="submit">Сохранить</button>
+                    </div>
+                </form>
+                <form th:action="@{/admin/catalogs/{id}/delete(id=${category.id})}" method="post"
+                      onsubmit="return confirm('Удалить каталог и все товары внутри?');">
+                    <button class="danger" type="submit" style="width:100%;">Удалить каталог</button>
+                </form>
+            </article>
         </section>
     </main>
 </div>
@@ -76,6 +121,8 @@
     <nav class="admin-mfab-sheet" id="adminMfabSheet" aria-hidden="true">
         <a th:href="@{/admin/catalogs}" th:classappend="${activeMenu == 'catalogs'} ? 'active'">Каталоги</a>
         <a th:href="@{/admin/products}" th:classappend="${activeMenu == 'products'} ? 'active'">Товары</a>
+        <a th:href="@{/admin/reviews}" th:classappend="${activeMenu == 'reviews'} ? 'active'">Отзывы</a>
+        <a th:href="@{/admin/catalog-header}" th:classappend="${activeMenu == 'catalog-header'} ? 'active'">Шапка сайта</a>
         <a th:href="@{/admin/contacts}" th:classappend="${activeMenu == 'contacts'} ? 'active'">Контакты</a>
         <a th:href="@{/admin/brand}" th:classappend="${activeMenu == 'brand'} ? 'active'">О бренде</a>
         <a th:href="@{/admin/weather}" th:classappend="${activeMenu == 'weather'} ? 'active'">Погода</a>

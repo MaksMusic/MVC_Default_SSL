@@ -5,52 +5,148 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Каталог</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Manrope:wght@500;700&display=swap');
         *{box-sizing:border-box}
-        body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;margin:0;background:linear-gradient(165deg,#f8fafc,#eef2ff 45%,#f0f9ff);color:#334155}
-        .topbar{position:sticky;top:0;z-index:10;display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;padding:14px 20px;background:rgba(255,255,255,.85);backdrop-filter:blur(10px);border-bottom:1px solid rgba(148,163,184,.2);box-shadow:0 1px 0 rgba(255,255,255,.8)}
-        .topbar a{color:#475569;text-decoration:none;font-weight:600;font-size:14px;padding:8px 16px;border-radius:999px;border:1px solid rgba(148,163,184,.35);background:#fff;transition:color .2s,border-color .2s,box-shadow .2s}
-        .topbar a:hover{color:#2563eb;border-color:#93c5fd;box-shadow:0 2px 12px rgba(37,99,235,.12)}
+        body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;margin:0;background:#f3ece3;color:#2f2a26;overflow-x:hidden}
+        .topbar{position:sticky;top:0;z-index:10;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;padding:12px 16px;background:#f8f3ed;border-bottom:1px solid #dfd3c6}
+        .topbar a{color:#3b342f;text-decoration:none;font-weight:500;font-size:14px;padding:7px 14px;border-radius:999px;border:1px solid #d6c8b8;background:#fcf9f4}
         @media(max-width:768px){.topbar{display:none}}
-        .wrap{max-width:1100px;margin:0 auto;padding:20px 20px calc(118px + env(safe-area-inset-bottom,0px))}
-        .page-head{margin-top:12px}
-        .page-head h1{margin:0;font-size:1.8rem;font-weight:800;background:linear-gradient(110deg,#2563eb,#7c3aed,#db2777);-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:.02em}
-        .grid{margin-top:18px;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
-        .card{background:#fff;border:1px solid rgba(148,163,184,.25);border-radius:18px;padding:16px;box-shadow:0 8px 28px rgba(15,23,42,.06);transition:transform .22s ease, box-shadow .22s ease, border-color .22s ease}
-        .card:hover{transform:translateY(-6px) scale(1.01);border-color:rgba(37,99,235,.35);box-shadow:0 16px 36px rgba(37,99,235,.18)}
-        .card h3{margin:0 0 8px;color:#0f172a}
-        .card p{margin:0;color:#64748b;font-size:14px}
-        .btn{display:inline-block;margin-top:10px;padding:10px 16px;border-radius:10px;background:linear-gradient(105deg,#2563eb,#7c3aed);color:#fff;text-decoration:none;font-weight:600;font-size:14px}
-        .btn:hover{opacity:.95}
-        .mobile-nav{position:fixed;left:14px;right:14px;bottom:calc(28px + env(safe-area-inset-bottom,0px));z-index:50;background:rgba(255,255,255,.97);border:1px solid rgba(148,163,184,.28);border-radius:18px;padding:12px 10px;display:none;justify-content:space-around;align-items:center;box-shadow:0 10px 36px rgba(15,23,42,.1)}
-        .mobile-nav a{text-decoration:none;color:#475569;font-size:12px;font-weight:600}
-        @media(max-width:768px){.mobile-nav{display:flex}}
+        .hero-outer{padding:12px 0 0}
+        .hero-inner{max-width:1400px;margin:0 auto;padding:0 18px}
+        .wrap{max-width:1160px;margin:0 auto;padding:12px 18px calc(114px + env(safe-area-inset-bottom,0px))}
+        .brand-title{
+            font-family:"Cormorant Garamond","Times New Roman",serif;
+            font-size:clamp(2.2rem,7vw,5rem);
+            font-weight:700;
+            color:#111;
+            margin:4px 0 0;
+            line-height:1.03;
+            letter-spacing:.02em;
+            text-wrap:balance;
+            width:100%;
+            max-width:1380px;
+        }
+        .brand-sub{
+            font-family:"Manrope","Segoe UI",Roboto,Arial,sans-serif;
+            font-size:clamp(1rem,2.1vw,1.35rem);
+            font-weight:700;
+            color:#5e5a56;
+            margin:6px 0 16px;
+            letter-spacing:.01em;
+        }
+        .hero{
+            width:100%;
+            aspect-ratio:1920/700;
+            min-height:180px;
+            border-radius:0;
+            background:#e7dbce;
+            border-top:1px solid #dbcbbb;
+            border-bottom:1px solid #dbcbbb;
+            object-fit:cover;
+            display:block
+        }
+        .grid{margin-top:18px;display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+        .card{display:block;text-decoration:none;color:inherit;background:#f9f4ed;border:1px solid #ddcfbf;border-radius:18px;padding:12px;box-shadow:0 4px 16px rgba(58,45,31,.07)}
+        .card img{width:100%;height:150px;border-radius:12px;object-fit:cover;background:#efe3d4}
+        .catalog-placeholder{width:100%;height:150px;border-radius:12px;background:#efe3d4}
+        .card h3{margin:10px 0 6px;font-size:20px;color:#221f1c}
+        .card p{margin:0;color:#645c55;font-size:14px}
+        .weather-layer{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:2}
+        .particle{position:absolute;top:-10%;border-radius:50%;opacity:.85;animation:fall linear infinite}
+        .particle.snow{background:#fff;box-shadow:0 0 8px rgba(255,255,255,.6)}
+        .particle.leaf{background:transparent;font-size:14px;animation-name:fallLeaf}
+        .sun{
+            position:fixed;top:84px;right:28px;width:78px;height:78px;border-radius:50%;
+            background:radial-gradient(circle,#fde68a 25%,#f59e0b 68%);
+            box-shadow:0 0 45px rgba(245,158,11,.55);z-index:2;pointer-events:none
+        }
+        .sun::before{
+            content:'';position:absolute;inset:-18px;border-radius:50%;
+            border:2px dashed rgba(245,158,11,.55);animation:sunSpin 12s linear infinite
+        }
+        @keyframes fall{
+            0%{transform:translateY(-12vh);opacity:0}
+            10%{opacity:.95}
+            100%{transform:translateY(112vh);opacity:.2}
+        }
+        @keyframes fallLeaf{
+            0%{transform:translate(0,-12vh) rotate(0deg);opacity:0}
+            10%{opacity:.95}
+            100%{transform:translate(38px,112vh) rotate(220deg);opacity:.25}
+        }
+        @keyframes sunSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+        .mobile-nav{position:fixed;left:14px;right:14px;bottom:calc(24px + env(safe-area-inset-bottom,0px));z-index:50;background:#f9f4ed;border:1px solid #d8caba;border-radius:16px;padding:11px 10px;display:none;justify-content:space-around;align-items:center;box-shadow:0 8px 30px rgba(43,34,28,.11)}
+        .mobile-nav a{text-decoration:none;color:#4c443d;font-size:12px;font-weight:600}
+        @media(max-width:768px){
+            .mobile-nav{display:flex}
+            .hero-inner,.wrap{padding-left:14px;padding-right:14px}
+            .brand-sub{font-size:15px}
+            .grid{grid-template-columns:1fr}
+            .sun{top:18px;right:12px;width:60px;height:60px}
+        }
     </style>
 </head>
-<body>
+<body th:attr="data-weather=${weather}">
+<div class="weather-layer" id="weatherLayer" aria-hidden="true"></div>
+<div class="sun" id="summerSun" th:if="${weather == 'SUMMER'}"></div>
 <nav class="topbar">
-    <a th:href="@{/}">Главная</a>
     <a th:href="@{/catalog}">Каталог</a>
     <a th:href="@{/about}">О бренде</a>
     <a th:href="@{/contacts}">Контакты</a>
     <a th:href="@{/admin}">Админ</a>
 </nav>
-<div class="wrap">
-    <div class="page-head">
-        <h1>Каталоги</h1>
+<div class="hero-outer">
+    <div class="hero-inner">
+        <h1 class="brand-title">De&amp;Vi production</h1>
+        <p class="brand-sub">Подарочные наборы для творчества</p>
     </div>
+    <picture th:if="${(catalogHeaderImage != null and !#strings.isEmpty(catalogHeaderImage)) or (catalogHeaderImageMobile != null and !#strings.isEmpty(catalogHeaderImageMobile))}">
+        <source media="(max-width: 768px)" th:srcset="${catalogHeaderImageMobile != null and !#strings.isEmpty(catalogHeaderImageMobile)} ? @{/files(path=${catalogHeaderImageMobile})} : @{/files(path=${catalogHeaderImage})}">
+        <img class="hero" th:src="${catalogHeaderImage != null and !#strings.isEmpty(catalogHeaderImage)} ? @{/files(path=${catalogHeaderImage})} : @{/files(path=${catalogHeaderImageMobile})}" alt="Шапка каталога">
+    </picture>
+    <div class="hero" th:if="${(catalogHeaderImage == null or #strings.isEmpty(catalogHeaderImage)) and (catalogHeaderImageMobile == null or #strings.isEmpty(catalogHeaderImageMobile))}"></div>
+</div>
+<div class="wrap">
     <div class="grid">
-        <article class="card" th:each="category : ${categories}">
+        <a class="card" th:href="@{/catalog/{id}(id=${category.id})}" th:each="category : ${categories}">
+            <img th:if="${category.imageFileName != null and !#strings.isEmpty(category.imageFileName)}" th:src="@{/files(path=${category.imageFileName})}" alt="Каталог">
+            <div th:if="${category.imageFileName == null or #strings.isEmpty(category.imageFileName)}" class="catalog-placeholder"></div>
             <h3 th:text="${category.name}">Каталог</h3>
             <p th:text="'Товаров: ' + ${#lists.size(category.products)}">Товаров: 0</p>
-            <a class="btn" th:href="@{/catalog/{id}(id=${category.id})}">Открыть товары</a>
-        </article>
+        </a>
     </div>
 </div>
 <nav class="mobile-nav">
-    <a th:href="@{/}">Главная</a>
     <a th:href="@{/catalog}">Каталог</a>
     <a th:href="@{/about}">Бренд</a>
     <a th:href="@{/contacts}">Контакты</a>
 </nav>
+<script>
+(function(){
+    var weather=(document.body.getAttribute('data-weather')||'NONE').toUpperCase();
+    var layer=document.getElementById('weatherLayer');
+    if(!layer||weather==='NONE'||weather==='SUMMER'){return;}
+    var count=weather==='WINTER'?64:40;
+    for(var i=0;i<count;i++){
+        var p=document.createElement('span');
+        p.className='particle '+(weather==='WINTER'?'snow':'leaf');
+        var left=Math.random()*100;
+        var size=weather==='WINTER'?(2+Math.random()*5):(10+Math.random()*8);
+        var duration=weather==='WINTER'?(5+Math.random()*8):(7+Math.random()*10);
+        var delay=Math.random()*-duration;
+        p.style.left=left+'vw';
+        p.style.animationDuration=duration+'s';
+        p.style.animationDelay=delay+'s';
+        if(weather==='WINTER'){
+            p.style.width=size+'px';
+            p.style.height=size+'px';
+        }else{
+            p.textContent='🍂';
+            p.style.fontSize=size+'px';
+        }
+        layer.appendChild(p);
+    }
+})();
+</script>
 </body>
 </html>

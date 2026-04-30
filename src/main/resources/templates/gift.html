@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Получить подарок</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Manrope:wght@500;700&display=swap');
+        *{box-sizing:border-box}
+        body{font-family:"Manrope","Segoe UI",Roboto,Arial,sans-serif;margin:0;background:#f3ece3;color:#2f2a26;overflow-x:hidden}
+        .topbar{position:sticky;top:0;z-index:10;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;padding:12px 16px;background:#f8f3ed;border-bottom:1px solid #dfd3c6}
+        .topbar a{color:#3b342f;text-decoration:none;font-weight:500;font-size:14px;padding:7px 14px;border-radius:999px;border:1px solid #d6c8b8;background:#fcf9f4}
+        @media(max-width:768px){.topbar{display:none}}
+        .wrap{max-width:760px;margin:0 auto;padding:24px 16px calc(110px + env(safe-area-inset-bottom,0px))}
+        .card{background:#f8f2ea;border:1px solid #ddcfbf;border-radius:18px;padding:16px;box-shadow:0 4px 16px rgba(58,45,31,.07)}
+        h1{margin:0 0 8px;color:#1e1a17;font-family:"Cormorant Garamond","Times New Roman",serif;font-size:clamp(2rem,5vw,3.2rem);letter-spacing:.02em}
+        p{color:#5f5852;white-space:pre-line}
+        .btn{display:inline-block;padding:9px 14px;border-radius:10px;background:#fcf9f4;border:1px solid #cfbeaa;color:#2f2a26;text-decoration:none;font-weight:500;overflow-wrap:anywhere;word-break:break-word}
+        input[type="file"],button{width:100%;padding:10px;border:1px solid #cfbeaa;border-radius:10px;margin-top:8px;background:#fff}
+        button{cursor:pointer;background:#f5ede3}
+        .gift-links{margin-top:14px;display:grid;gap:8px}
+        .success-box{
+            margin-top:8px;
+            padding:14px;
+            border-radius:14px;
+            background:linear-gradient(140deg,#fff8ef,#f3ede3);
+            border:1px solid #deccb7;
+            animation:appear .5s ease-out both;
+        }
+        .confetti{
+            display:flex;
+            justify-content:center;
+            gap:10px;
+            font-size:30px;
+            margin:8px 0 12px;
+        }
+        .confetti span{
+            display:inline-block;
+            animation:pop .9s ease-in-out infinite;
+        }
+        .confetti span:nth-child(2){animation-delay:.15s}
+        .confetti span:nth-child(3){animation-delay:.3s}
+        .gift-title{
+            margin:0 0 8px;
+            font-family:"Cormorant Garamond","Times New Roman",serif;
+            font-size:clamp(1.6rem,4vw,2.2rem);
+            text-align:center;
+            color:#211c18;
+        }
+        @keyframes pop{
+            0%,100%{transform:translateY(0) scale(1)}
+            50%{transform:translateY(-7px) scale(1.12)}
+        }
+        @keyframes appear{
+            from{opacity:0;transform:translateY(8px)}
+            to{opacity:1;transform:translateY(0)}
+        }
+        .mobile-nav{position:fixed;left:14px;right:14px;bottom:calc(24px + env(safe-area-inset-bottom,0px));z-index:50;background:#f9f4ed;border:1px solid #d8caba;border-radius:16px;padding:11px 10px;display:none;justify-content:space-around;align-items:center;box-shadow:0 8px 30px rgba(43,34,28,.11)}
+        .mobile-nav a{text-decoration:none;color:#4c443d;font-size:12px;font-weight:600}
+        @media(max-width:768px){
+            .mobile-nav{display:flex}
+            .wrap > .btn{display:block;width:100%;text-align:center}
+            .gift-links .btn{display:block;width:100%;text-align:center}
+        }
+    </style>
+</head>
+<body>
+<nav class="topbar">
+    <a th:href="@{/catalog}">Каталог</a>
+    <a th:href="@{/about}">О бренде</a>
+    <a th:href="@{/contacts}">Контакты</a>
+    <a th:href="@{/admin}">Админ</a>
+</nav>
+<div class="wrap">
+    <a class="btn" th:href="@{/product/{slug}(slug=${product.slug})}">Назад к товару</a>
+    <section class="card" style="margin-top:12px;">
+        <h1>Получить подарок</h1>
+        <p th:text="${product.giftDescription != null and !#strings.isEmpty(product.giftDescription) ? product.giftDescription : 'Оставьте фото-отзыв, и мы покажем ссылки на подарок.'}">Описание подарка</p>
+
+        <form th:if="${!giftUnlocked}" th:action="@{/product/{slug}/gift(slug=${product.slug})}" method="post" enctype="multipart/form-data">
+            <label for="reviewPhoto">Загрузите фото с отзывом:</label>
+            <input id="reviewPhoto" type="file" name="reviewPhoto" accept="image/*" required>
+            <button type="submit">Отправить и получить подарок</button>
+        </form>
+
+        <div th:if="${giftUnlocked}" class="success-box">
+            <div class="confetti"><span>🎉</span><span>🎊</span><span>🎉</span></div>
+            <h3 class="gift-title">Подарок открыт!</h3>
+            <div class="gift-links">
+                <a class="btn" th:if="${product.giftUrl != null and !#strings.isEmpty(product.giftUrl)}"
+                   th:href="${product.giftUrl}" target="_blank" rel="noopener noreferrer">Скачать подарок</a>
+                <p th:if="${product.giftUrl == null or #strings.isEmpty(product.giftUrl)}">
+                    Ссылка на подарок пока не добавлена в админке.
+                </p>
+            </div>
+        </div>
+    </section>
+</div>
+<nav class="mobile-nav">
+    <a th:href="@{/catalog}">Каталог</a>
+    <a th:href="@{/about}">Бренд</a>
+    <a th:href="@{/contacts}">Контакты</a>
+</nav>
+</body>
+</html>

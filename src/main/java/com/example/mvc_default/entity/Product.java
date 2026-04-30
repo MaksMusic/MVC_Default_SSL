@@ -30,6 +30,15 @@ public class Product {
     @Column(length = 1000)
     private String wbProductUrl;
 
+    @Column(length = 2000)
+    private String instructionUrl;
+
+    @Column(length = 2000)
+    private String giftUrl;
+
+    @Column(length = 2000)
+    private String giftDescription;
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "category_id")
     private Category category;
@@ -53,6 +62,12 @@ public class Product {
     public void setAudioFileName(String audioFileName) { this.audioFileName = audioFileName; }
     public String getWbProductUrl() { return wbProductUrl; }
     public void setWbProductUrl(String wbProductUrl) { this.wbProductUrl = wbProductUrl; }
+    public String getInstructionUrl() { return instructionUrl; }
+    public void setInstructionUrl(String instructionUrl) { this.instructionUrl = instructionUrl; }
+    public String getGiftUrl() { return giftUrl; }
+    public void setGiftUrl(String giftUrl) { this.giftUrl = giftUrl; }
+    public String getGiftDescription() { return giftDescription; }
+    public void setGiftDescription(String giftDescription) { this.giftDescription = giftDescription; }
     public Category getCategory() { return category; }
     public void setCategory(Category category) { this.category = category; }
     public List<Instruction> getInstructions() { return instructions; }
