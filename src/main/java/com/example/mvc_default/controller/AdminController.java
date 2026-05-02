@@ -5,12 +5,14 @@ import com.example.mvc_default.repository.CategoryRepository;
 import com.example.mvc_default.repository.InstructionRepository;
 import com.example.mvc_default.repository.ProductRepository;
 import com.example.mvc_default.repository.ReviewRepository;
+import com.example.mvc_default.service.AdminUserDetailsService;
 import com.example.mvc_default.service.FileStorageService;
 import com.example.mvc_default.service.QRCodeService;
 import com.example.mvc_default.service.SitePageService;
 import com.example.mvc_default.service.SlugService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -30,6 +32,8 @@ public class AdminController {
     private final FileStorageService fileStorageService;
     private final SitePageService sitePageService;
     private final QRCodeService qrCodeService;
+    private final AdminUserDetailsService adminUserDetailsService;
+    private final PasswordEncoder passwordEncoder;
 
     public AdminController(
             CategoryRepository categoryRepository,
@@ -38,7 +42,9 @@ public class AdminController {
             ReviewRepository reviewRepository,
             FileStorageService fileStorageService,
             SitePageService sitePageService,
-            QRCodeService qrCodeService
+            QRCodeService qrCodeService,
+            AdminUserDetailsService adminUserDetailsService,
+            PasswordEncoder passwordEncoder
     ) {
         this.categoryRepository = categoryRepository;
         this.productRepository = productRepository;
@@ -47,6 +53,8 @@ public class AdminController {
         this.fileStorageService = fileStorageService;
         this.sitePageService = sitePageService;
         this.qrCodeService = qrCodeService;
+        this.adminUserDetailsService = adminUserDetailsService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping
@@ -439,6 +447,48 @@ public class AdminController {
     public String updateBrand(@RequestParam String content) {
         sitePageService.updateContent("about", content);
         return "redirect:/admin/brand";
+    }
+
+    @GetMapping("/password")
+    public String passwordForm(Model model) {
+        model.addAttribute("activeMenu", "password");
+        return "admin/password";
+    }
+
+    @PostMapping("/password")
+    public String changePassword(
+            @RequestParam String oldPassword,
+            @RequestParam String newPassword,
+            @RequestParam String confirmPassword,
+            RedirectAttributes redirectAttributes
+    ) {
+        if (oldPassword == null || oldPassword.isBlank()) {
+            redirectAttributes.addFlashAttribute("error", "Введите текущий пароль");
+            return "redirect:/admin/password";
+        }
+        if (newPassword == null || newPassword.isBlank()) {
+            redirectAttributes.addFlashAttribute("error", "Введите новый пароль");
+            return "redirect:/admin/password";
+        }
+        if (newPassword.length() < 8) {
+            redirectAttributes.addFlashAttribute("error", "Новый пароль — не короче 8 символов");
+            return "redirect:/admin/password";
+        }
+        if (!newPassword.equals(confirmPassword)) {
+            redirectAttributes.addFlashAttribute("error", "Новый пароль и подтверждение не совпадают");
+            return "redirect:/admin/password";
+        }
+        if (newPassword.equals(oldPassword)) {
+            redirectAttributes.addFlashAttribute("error", "Новый пароль должен отличаться от текущего");
+            return "redirect:/admin/password";
+        }
+        if (!adminUserDetailsService.verifyPassword(oldPassword)) {
+            redirectAttributes.addFlashAttribute("error", "Неверный текущий пароль");
+            return "redirect:/admin/password";
+        }
+        adminUserDetailsService.savePasswordHash(passwordEncoder.encode(newPassword));
+        redirectAttributes.addFlashAttribute("success", "Пароль изменён. При следующем входе используйте новый пароль.");
+        return "redirect:/admin/password";
     }
 
     @GetMapping("/weather")
