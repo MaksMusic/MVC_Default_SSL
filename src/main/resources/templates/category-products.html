@@ -16,6 +16,7 @@
         .card{background:#f8f2ea;border:1px solid #ddcfbf;border-radius:18px;padding:12px;box-shadow:0 4px 16px rgba(58,45,31,.07)}
         .card-link{text-decoration:none;color:inherit;display:block}
         .card img{width:100%;height:165px;object-fit:cover;border-radius:12px;background:#efe3d4}
+        .card-placeholder{width:100%;height:165px;border-radius:12px;background:#efe3d4}
         .card h3{margin:10px 0 4px;font-size:34px;line-height:1;color:#12100f}
         .card p{margin:0;color:#5f5852;font-size:14px;line-height:1.35;white-space:pre-line;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:5;overflow:hidden;min-height:calc(1.35em * 5);overflow-wrap:anywhere;word-break:break-word}
         .actions{margin-top:12px;display:grid;gap:8px}
@@ -26,6 +27,16 @@
             .mobile-nav{display:flex}
             h1{font-size:34px}
             .card h3{font-size:28px}
+            .card img{
+                height:auto;
+                display:block;
+                object-fit:contain;
+            }
+            .card-placeholder{
+                height:auto;
+                aspect-ratio:4/3;
+                min-height:120px;
+            }
         }
     </style>
 </head>
@@ -42,7 +53,7 @@
         <article class="card" th:each="product : ${products}">
             <a class="card-link" th:href="@{/product/{slug}(slug=${product.slug})}">
                 <img th:if="${product.imageFileName}" th:src="@{/files(path=${product.imageFileName})}" alt="Фото товара">
-                <div th:if="${product.imageFileName == null}" style="width:100%;height:165px;border-radius:12px;background:#efe3d4;"></div>
+                <div th:if="${product.imageFileName == null}" class="card-placeholder"></div>
                 <h3 th:text="${product.name}">Товар</h3>
                 <p th:text="${product.shortDescription}">Описание</p>
             </a>

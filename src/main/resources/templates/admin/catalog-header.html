@@ -57,7 +57,7 @@
             <form th:action="@{/admin/catalog-header}" method="post" enctype="multipart/form-data">
                 <label>Картинка шапки для WEB</label>
                 <input type="file" name="imageFile" accept="image/*">
-                <p class="hint">Рекомендуемый размер шапки: 1920x700 px (допустимо 1600x600, минимум 1366x512).</p>
+                <p class="hint">На ПК шапка на всю ширину окна, по высоте ровно под ваш файл — картинка показывается целиком, без обрезки. Чтобы полоса была ниже, чем у 1600×900, сделайте макет с меньшей высотой при той же ширине (например 1600×800 или 1600×750); на сайте высота подстроится автоматически.</p>
                 <div class="image-wrap" th:if="${catalogHeaderImage != null and !#strings.isEmpty(catalogHeaderImage)}">
                     <img class="preview" th:src="@{/files(path=${catalogHeaderImage})}" alt="Шапка каталога">
                     <button type="submit"
@@ -70,7 +70,7 @@
                 </div>
                 <label style="margin-top:8px;display:block;">Картинка шапки для MOBILE</label>
                 <input type="file" name="imageFileMobile" accept="image/*">
-                <p class="hint">Рекомендуемый размер mobile-шапки: 1080x1440 px (или 900x1200).</p>
+                <p class="hint">На телефоне шапка такая же по форме, как на ПК: на всю ширину экрана, формат 16:9. Рекомендуемые размеры файла: 1200×675 px или 1600×900 px (можно тот же файл, что и для WEB). Важно соотношение 16:9; при другом формате края будут подрезаны под блок.</p>
                 <div class="image-wrap" th:if="${catalogHeaderImageMobile != null and !#strings.isEmpty(catalogHeaderImageMobile)}">
                     <img class="preview" th:src="@{/files(path=${catalogHeaderImageMobile})}" alt="Шапка каталога мобильная">
                     <button type="submit"

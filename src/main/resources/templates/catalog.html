@@ -36,14 +36,37 @@
         }
         .hero{
             width:100%;
-            aspect-ratio:1920/700;
-            min-height:180px;
+            aspect-ratio:16/9;
+            min-height:160px;
             border-radius:0;
             background:#e7dbce;
             border-top:1px solid #dbcbbb;
             border-bottom:1px solid #dbcbbb;
             object-fit:cover;
+            object-position:center;
             display:block
+        }
+        .hero-outer picture{display:block;width:100%;max-width:100%}
+        @media(min-width:769px){
+            .hero-outer picture{
+                display:block;
+                width:100%;
+                border-top:1px solid #dbcbbb;
+                border-bottom:1px solid #dbcbbb;
+                background:#e7dbce;
+            }
+            img.hero{
+                width:100%;
+                max-width:100%;
+                height:auto;
+                aspect-ratio:unset;
+                min-height:0;
+                object-fit:contain;
+                object-position:center;
+                border-top:none;
+                border-bottom:none;
+                display:block;
+            }
         }
         .grid{margin-top:18px;display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
         .card{display:block;text-decoration:none;color:inherit;background:#f9f4ed;border:1px solid #ddcfbf;border-radius:18px;padding:12px;box-shadow:0 4px 16px rgba(58,45,31,.07)}
@@ -83,6 +106,17 @@
             .brand-sub{font-size:15px}
             .grid{grid-template-columns:1fr}
             .sun{top:18px;right:12px;width:60px;height:60px}
+            .card img{
+                height:auto;
+                width:100%;
+                display:block;
+                object-fit:contain;
+            }
+            .catalog-placeholder{
+                height:auto;
+                aspect-ratio:4/3;
+                min-height:120px;
+            }
         }
     </style>
 </head>
