@@ -65,6 +65,7 @@
                 <input name="instructionUrl" type="url" th:value="${product.instructionUrl}" placeholder="Ссылка на полную инструкцию (Яндекс Диск)">
                 <textarea name="giftDescription" th:text="${product.giftDescription}" placeholder="Описание подарка (что получит клиент)"></textarea>
                 <input name="giftUrl" type="url" th:value="${product.giftUrl}" placeholder="Ссылка на подарок (Яндекс Диск)">
+                <input name="lunarCalendarUrl" type="url" th:value="${product.lunarCalendarUrl}" placeholder="Лунный календарь — ссылка (Яндекс Диск)">
                 <select name="categoryId" required>
                     <option value="">Выберите каталог</option>
                     <option th:each="c : ${categories}" th:value="${c.id}" th:text="${c.name}" th:selected="${editMode and product.category != null and product.category.id == c.id}"></option>

@@ -38,6 +38,7 @@
         <audio th:if="${product.audioFileName}" controls th:src="@{/files(path=${product.audioFileName})}" style="margin-top:10px;width:100%;"></audio>
         <div class="actions">
             <a class="btn" th:if="${product.instructionUrl != null and !#strings.isEmpty(product.instructionUrl)}" th:href="${product.instructionUrl}" target="_blank" rel="noopener noreferrer">Инструкция</a>
+            <a class="btn" th:if="${product.lunarCalendarUrl != null and !#strings.isEmpty(product.lunarCalendarUrl)}" th:href="${product.lunarCalendarUrl}" target="_blank" rel="noopener noreferrer">Лунный календарь</a>
             <a class="btn" th:href="@{/product/{slug}/gift(slug=${product.slug})}">Подарок</a>
             <a class="btn" th:if="${product.wbProductUrl != null and !#strings.isEmpty(product.wbProductUrl)}" th:href="${product.wbProductUrl}" target="_blank" rel="noopener noreferrer">Найти на WB</a>
         </div>

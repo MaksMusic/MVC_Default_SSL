@@ -254,6 +254,7 @@ public class AdminController {
             @RequestParam(required = false) String instructionUrl,
             @RequestParam(required = false) String giftDescription,
             @RequestParam(required = false) String giftUrl,
+            @RequestParam(required = false) String lunarCalendarUrl,
             @RequestParam Long categoryId,
             @RequestParam(required = false) MultipartFile imageFile,
             @RequestParam(required = false) MultipartFile videoFile,
@@ -267,6 +268,7 @@ public class AdminController {
         product.setInstructionUrl(instructionUrl);
         product.setGiftDescription(giftDescription);
         product.setGiftUrl(giftUrl);
+        product.setLunarCalendarUrl(lunarCalendarUrl);
         product.setCategory(category);
         product.setSlug(uniqueSlug(name));
         applyMediaFiles(product, imageFile, videoFile, audioFile);
@@ -283,6 +285,7 @@ public class AdminController {
             @RequestParam(required = false) String instructionUrl,
             @RequestParam(required = false) String giftDescription,
             @RequestParam(required = false) String giftUrl,
+            @RequestParam(required = false) String lunarCalendarUrl,
             @RequestParam Long categoryId,
             @RequestParam(required = false) MultipartFile imageFile,
             @RequestParam(required = false) MultipartFile videoFile,
@@ -300,6 +303,7 @@ public class AdminController {
         product.setInstructionUrl(instructionUrl);
         product.setGiftDescription(giftDescription);
         product.setGiftUrl(giftUrl);
+        product.setLunarCalendarUrl(lunarCalendarUrl);
         product.setCategory(category);
 
         if (removeImage) {

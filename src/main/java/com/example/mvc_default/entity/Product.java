@@ -37,6 +37,9 @@ public class Product {
     private String giftUrl;
 
     @Column(length = 2000)
+    private String lunarCalendarUrl;
+
+    @Column(length = 2000)
     private String giftDescription;
 
     @ManyToOne(optional = false)
@@ -66,6 +69,8 @@ public class Product {
     public void setInstructionUrl(String instructionUrl) { this.instructionUrl = instructionUrl; }
     public String getGiftUrl() { return giftUrl; }
     public void setGiftUrl(String giftUrl) { this.giftUrl = giftUrl; }
+    public String getLunarCalendarUrl() { return lunarCalendarUrl; }
+    public void setLunarCalendarUrl(String lunarCalendarUrl) { this.lunarCalendarUrl = lunarCalendarUrl; }
     public String getGiftDescription() { return giftDescription; }
     public void setGiftDescription(String giftDescription) { this.giftDescription = giftDescription; }
     public Category getCategory() { return category; }
